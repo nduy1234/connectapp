@@ -2,6 +2,10 @@
 
 A beautiful mobile-first startup networking platform built with React, Supabase, and Capacitor.
 
+## Project Info
+
+**URL**: https://lovable.dev/projects/f5037265-3c96-4a94-b2e3-c15668dd6b1c
+
 ## 🚀 Features
 
 - ✨ **Authentication** - Email/password, Google, and Apple sign-in
@@ -37,7 +41,7 @@ VITE_SUPABASE_PROJECT_ID=ktwgptvbgyongxaanxdt
 npm run dev
 ```
 
-5. Open [http://localhost:5173](http://localhost:5173)
+5. Open [http://localhost:8080](http://localhost:8080)
 
 ## 📱 Mobile Development
 
@@ -94,7 +98,7 @@ src/
 ## 🚢 Deployment
 
 ### Web (Lovable)
-This project is configured for Lovable. Simply click "Publish" in the Lovable interface.
+This project is configured for Lovable. Visit [your project](https://lovable.dev/projects/f5037265-3c96-4a94-b2e3-c15668dd6b1c) and click "Publish".
 
 ### Mobile App Stores
 1. Build: `npm run build`
