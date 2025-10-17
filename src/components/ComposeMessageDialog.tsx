@@ -28,11 +28,11 @@ export const ComposeMessageDialog: React.FC<ComposeMessageDialogProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
 
   const contacts: Contact[] = [
-    { id: 6, name: 'Alex Turner', startupName: 'CloudScale', avatar: 'AT' },
-    { id: 7, name: 'Maria Garcia', startupName: 'DataFlow', avatar: 'MG' },
-    { id: 8, name: 'James Wilson', startupName: 'SecureNet', avatar: 'JW' },
-    { id: 9, name: 'Lisa Anderson', startupName: 'MobileFirst', avatar: 'LA' },
-    { id: 10, name: 'Robert Taylor', startupName: 'AI Dynamics', avatar: 'RT' },
+    { id: 6, name: 'Sarah Chen', startupName: 'TechFlow AI', avatar: 'SC' },
+    { id: 7, name: 'Michael Rodriguez', startupName: 'FinWave', avatar: 'MR' },
+    { id: 8, name: 'Emily Watson', startupName: 'GreenTech Solutions', avatar: 'EW' },
+    { id: 9, name: 'David Kim', startupName: 'HealthHub', avatar: 'DK' },
+    { id: 10, name: 'Jessica Lee', startupName: 'EduConnect', avatar: 'JL' },
   ];
 
   const filteredContacts = contacts.filter(
