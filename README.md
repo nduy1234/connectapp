@@ -1,73 +1,109 @@
-# Welcome to your Lovable project
+# Connect - Startup Networking Mobile App
 
-## Project info
+A beautiful mobile-first startup networking platform built with React, Supabase, and Capacitor.
 
-**URL**: https://lovable.dev/projects/ad05ac4e-bf75-49a6-a8f6-d9be88f76789
+## 🚀 Features
 
-## How can I edit this code?
+- ✨ **Authentication** - Email/password, Google, and Apple sign-in
+- 👤 **User Profiles** - Comprehensive startup profiles with stories, goals, and media uploads
+- 💬 **Real-time Messaging** - Connect and chat with other entrepreneurs
+- 🔒 **Privacy Controls** - Manage profile visibility and messaging preferences
+- 🔔 **Notifications** - Customizable notification settings
+- 📱 **Mobile Native** - Built with Capacitor for iOS and Android
 
-There are several ways of editing your application.
+## 🛠️ Quick Start
 
-**Use Lovable**
+### Prerequisites
+- Node.js 18+ or Bun
+- Supabase account (credentials already configured)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/ad05ac4e-bf75-49a6-a8f6-d9be88f76789) and start prompting.
+### Installation
 
-Changes made via Lovable will be committed automatically to this repo.
+1. Clone the repository
+2. Install dependencies:
+```bash
+npm install
+```
 
-**Use your preferred IDE**
+3. Create a `.env` file with your Supabase credentials:
+```env
+VITE_SUPABASE_URL=https://ktwgptvbgyongxaanxdt.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0d2dwdHZiZ3lvbmd4YWFueGR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1ODM4NzQsImV4cCI6MjA3NDE1OTg3NH0.h4qPLsrgLrU07LBnKLoUfN_DaHQvG5pUqDxGZWzzsQA
+VITE_SUPABASE_PROJECT_ID=ktwgptvbgyongxaanxdt
+```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+4. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+5. Open [http://localhost:5173](http://localhost:5173)
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 📱 Mobile Development
 
-**Use GitHub Codespaces**
+For detailed mobile development instructions with Capacitor, see [SETUP.md](./SETUP.md)
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+**Quick commands:**
+```bash
+# Build the app
+npm run build
 
-## What technologies are used for this project?
+# Sync with Capacitor
+npx cap sync
 
-This project is built with:
+# Open in native IDE
+npx cap open ios    # Requires macOS & Xcode
+npx cap open android # Requires Android Studio
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🗄️ Database Setup
 
-## How can I deploy this project?
+See [SETUP.md](./SETUP.md) for complete Supabase database schema and RLS policies.
 
-Simply open [Lovable](https://lovable.dev/projects/ad05ac4e-bf75-49a6-a8f6-d9be88f76789) and click on Share -> Publish.
+## 🎨 Tech Stack
 
-## Can I connect a custom domain to my Lovable project?
+- **Frontend:** React 18 + TypeScript + Vite
+- **UI:** Tailwind CSS + shadcn/ui components
+- **Backend:** Supabase (Auth, Database, Realtime)
+- **Mobile:** Capacitor
+- **State:** TanStack Query
+- **Routing:** React Router v6
 
-Yes, you can!
+## 📝 Project Structure
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+```
+src/
+├── components/          # React components
+│   ├── ui/             # shadcn/ui components
+│   ├── MobileApp.tsx   # Main app component
+│   ├── ConversationList.tsx
+│   ├── ChatDetail.tsx
+│   └── ComposeMessageDialog.tsx
+├── hooks/              # Custom React hooks
+│   └── useAuth.tsx     # Authentication hook
+├── integrations/       # External integrations
+│   └── supabase/      # Supabase client & types
+├── lib/               # Utilities
+│   ├── utils.ts
+│   └── supabase.ts
+└── pages/             # Route pages
+    ├── Index.tsx
+    └── NotFound.tsx
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## 🚢 Deployment
+
+### Web (Lovable)
+This project is configured for Lovable. Simply click "Publish" in the Lovable interface.
+
+### Mobile App Stores
+1. Build: `npm run build`
+2. Sync: `npx cap sync`
+3. Open native IDE and follow platform-specific submission guidelines
+
+## 📚 Documentation Links
+
+- [Full Setup Guide](./SETUP.md)
+- [Lovable Documentation](https://docs.lovable.dev/)
+- [Supabase Docs](https://supabase.com/docs)
+- [Capacitor Docs](https://capacitorjs.com/docs)
