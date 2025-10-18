@@ -1,5 +1,7 @@
 import React from 'react';
 import sarahChenAvatar from '@/assets/sarah-chen-avatar.jpg';
+import emilyWatsonAvatar from '@/assets/emily-watson-avatar.jpg';
+import jessicaLeeAvatar from '@/assets/jessica-lee-avatar.jpg';
 
 interface Conversation {
   id: number;
@@ -85,6 +87,10 @@ export const ConversationList: React.FC<ConversationListProps> = ({
             <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center shadow-glow flex-shrink-0 overflow-hidden">
               {conv.id === 1 ? (
                 <img src={sarahChenAvatar} alt={conv.name} className="w-full h-full object-cover" />
+              ) : conv.id === 3 ? (
+                <img src={emilyWatsonAvatar} alt={conv.name} className="w-full h-full object-cover" />
+              ) : conv.id === 5 ? (
+                <img src={jessicaLeeAvatar} alt={conv.name} className="w-full h-full object-cover" />
               ) : (
                 <span className="text-white font-bold text-sm">{conv.avatar}</span>
               )}
