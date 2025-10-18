@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send, Paperclip, Smile } from 'lucide-react';
+import { ArrowLeft, Send, Paperclip } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -141,12 +141,6 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
             className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-accent transition-colors text-foreground-muted hover:text-foreground"
           >
             <Paperclip className="w-5 h-5" />
-          </button>
-          <button
-            type="button"
-            className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-accent transition-colors text-foreground-muted hover:text-foreground"
-          >
-            <Smile className="w-5 h-5" />
           </button>
           <Input
             type="text"
