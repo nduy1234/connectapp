@@ -12,6 +12,7 @@ import { Search } from 'lucide-react';
 interface ComposeMessageDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSelectContact: (contactId: number, contactName: string) => void;
 }
 
 interface Contact {
@@ -24,6 +25,7 @@ interface Contact {
 export const ComposeMessageDialog: React.FC<ComposeMessageDialogProps> = ({
   open,
   onOpenChange,
+  onSelectContact,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -43,8 +45,7 @@ export const ComposeMessageDialog: React.FC<ComposeMessageDialogProps> = ({
   );
 
   const handleSelectContact = (contact: Contact) => {
-    // In a real app, this would navigate to the chat with this contact
-    console.log('Selected contact:', contact);
+    onSelectContact(contact.id, contact.name);
     onOpenChange(false);
   };
 

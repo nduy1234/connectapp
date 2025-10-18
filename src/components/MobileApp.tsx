@@ -855,6 +855,10 @@ function MobileApp() {
         <ComposeMessageDialog
           open={showNewMessageDialog}
           onOpenChange={setShowNewMessageDialog}
+          onSelectContact={(contactId, contactName) => {
+            setSelectedChatUserId(contactId.toString());
+            setSelectedChatUserName(contactName);
+          }}
         />
       </div>
     </div>;
