@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Home, User, BookOpen, MessageCircle, Briefcase, Bell, Settings, Eye, EyeOff, Mail, Lock, ArrowLeft, Check, Loader2, Users, Calendar, Activity, Rocket, Camera, Video, Upload, Search, Plus } from 'lucide-react';
+import { Home, User, BookOpen, MessageCircle, Briefcase, Bell, Settings, Eye, EyeOff, Mail, Lock, ArrowLeft, Check, Loader2, Users, Calendar, Activity, Rocket, Camera, Video, Upload, Search, Plus, LogOut } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ConversationList } from './ConversationList';
@@ -143,6 +143,12 @@ function MobileApp() {
   };
   const handleWelcomeNext = () => {
     setCurrentScreen('main');
+  };
+  
+  const handleLogout = () => {
+    setUser(null);
+    setCurrentScreen('signin');
+    setActiveTab('home');
   };
   if (currentScreen === 'signin' || currentScreen === 'forgot-password' || currentScreen === 'reset-success') {
     return <div className="mobile-container">
@@ -445,6 +451,14 @@ function MobileApp() {
                         <Bell className="w-5 h-5 text-white" />
                       </div>
                       <span className="font-semibold text-foreground">Notification Preferences</span>
+                    </div>
+                  </div>
+                  <div onClick={handleLogout} className="flex items-center justify-between p-4 glass-effect rounded-xl hover:bg-accent transition-all duration-200 cursor-pointer card-hover">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-10 h-10 bg-gradient-to-br from-error to-error-dark rounded-xl flex items-center justify-center shadow-lg shadow-error/30">
+                        <LogOut className="w-5 h-5 text-white" />
+                      </div>
+                      <span className="font-semibold text-foreground">Logout</span>
                     </div>
                   </div>
                 </div>
