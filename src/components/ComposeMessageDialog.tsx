@@ -9,7 +9,9 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import sarahChenAvatar from '@/assets/sarah-chen-avatar.jpg';
+import michaelRodriguezAvatar from '@/assets/michael-rodriguez-avatar.jpg';
 import emilyWatsonAvatar from '@/assets/emily-watson-avatar.jpg';
+import davidKimAvatar from '@/assets/david-kim-avatar.jpg';
 import jessicaLeeAvatar from '@/assets/jessica-lee-avatar.jpg';
 
 interface ComposeMessageDialogProps {
@@ -83,8 +85,12 @@ export const ComposeMessageDialog: React.FC<ComposeMessageDialogProps> = ({
                   <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center shadow-glow flex-shrink-0 overflow-hidden">
                     {contact.id === 6 ? (
                       <img src={sarahChenAvatar} alt={contact.name} className="w-full h-full object-cover" />
+                    ) : contact.id === 7 ? (
+                      <img src={michaelRodriguezAvatar} alt={contact.name} className="w-full h-full object-cover" />
                     ) : contact.id === 8 ? (
                       <img src={emilyWatsonAvatar} alt={contact.name} className="w-full h-full object-cover" />
+                    ) : contact.id === 9 ? (
+                      <img src={davidKimAvatar} alt={contact.name} className="w-full h-full object-cover" />
                     ) : contact.id === 10 ? (
                       <img src={jessicaLeeAvatar} alt={contact.name} className="w-full h-full object-cover" />
                     ) : (

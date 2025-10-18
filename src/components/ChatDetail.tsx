@@ -3,7 +3,9 @@ import { ArrowLeft, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import sarahChenAvatar from '@/assets/sarah-chen-avatar.jpg';
+import michaelRodriguezAvatar from '@/assets/michael-rodriguez-avatar.jpg';
 import emilyWatsonAvatar from '@/assets/emily-watson-avatar.jpg';
+import davidKimAvatar from '@/assets/david-kim-avatar.jpg';
 import jessicaLeeAvatar from '@/assets/jessica-lee-avatar.jpg';
 
 interface Message {
@@ -101,8 +103,12 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
           <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center shadow-glow flex-shrink-0 overflow-hidden">
             {partnerId === '1' ? (
               <img src={sarahChenAvatar} alt={partnerName} className="w-full h-full object-cover" />
+            ) : partnerId === '2' ? (
+              <img src={michaelRodriguezAvatar} alt={partnerName} className="w-full h-full object-cover" />
             ) : partnerId === '3' ? (
               <img src={emilyWatsonAvatar} alt={partnerName} className="w-full h-full object-cover" />
+            ) : partnerId === '4' ? (
+              <img src={davidKimAvatar} alt={partnerName} className="w-full h-full object-cover" />
             ) : partnerId === '5' ? (
               <img src={jessicaLeeAvatar} alt={partnerName} className="w-full h-full object-cover" />
             ) : (
