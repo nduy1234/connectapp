@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import sarahChenAvatar from '@/assets/sarah-chen-avatar.jpg';
 
 interface Message {
   id: number;
@@ -95,8 +96,12 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center shadow-glow flex-shrink-0">
-            <span className="text-white font-bold text-sm">{getInitials(partnerName)}</span>
+          <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center shadow-glow flex-shrink-0 overflow-hidden">
+            {partnerId === '1' ? (
+              <img src={sarahChenAvatar} alt={partnerName} className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-white font-bold text-sm">{getInitials(partnerName)}</span>
+            )}
           </div>
           <div className="flex-1 min-w-0">
             <h2 className="font-bold text-foreground truncate">{partnerName}</h2>

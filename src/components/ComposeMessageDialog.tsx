@@ -8,6 +8,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
+import sarahChenAvatar from '@/assets/sarah-chen-avatar.jpg';
 
 interface ComposeMessageDialogProps {
   open: boolean;
@@ -77,8 +78,12 @@ export const ComposeMessageDialog: React.FC<ComposeMessageDialogProps> = ({
                   onClick={() => handleSelectContact(contact)}
                   className="flex items-center space-x-3 p-3 glass-effect rounded-xl hover:bg-accent cursor-pointer transition-all duration-200"
                 >
-                  <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center shadow-glow flex-shrink-0">
-                    <span className="text-white font-bold text-sm">{contact.avatar}</span>
+                  <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center shadow-glow flex-shrink-0 overflow-hidden">
+                    {contact.id === 6 ? (
+                      <img src={sarahChenAvatar} alt={contact.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-white font-bold text-sm">{contact.avatar}</span>
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-foreground truncate">{contact.name}</h3>
