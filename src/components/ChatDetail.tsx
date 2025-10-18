@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send, Paperclip } from 'lucide-react';
+import { ArrowLeft, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -136,12 +136,6 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
       {/* Input Area */}
       <div className="glass-effect border-t border-border px-6 py-4 shadow-glass">
         <form onSubmit={handleSendMessage} className="flex items-center space-x-3">
-          <button
-            type="button"
-            className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-accent transition-colors text-foreground-muted hover:text-foreground"
-          >
-            <Paperclip className="w-5 h-5" />
-          </button>
           <Input
             type="text"
             placeholder="Type a message..."
