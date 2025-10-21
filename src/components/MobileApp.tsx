@@ -801,7 +801,11 @@ function MobileApp() {
                         </div>
                       </div>
                       <p className="text-sm font-medium text-primary mb-1">HealthHub</p>
-                      <p className="text-sm text-foreground-secondary">Would love to discuss potential partner...</p>
+                      <div className="space-y-1 text-xs">
+                        <p className="text-foreground-secondary"><span className="font-medium">Location:</span> Boston, MA</p>
+                        <p className="text-foreground-secondary"><span className="font-medium">Industry:</span> Healthcare</p>
+                        <p className="text-foreground-secondary"><span className="font-medium">Description:</span> A health platform to support mental health for the seniors.</p>
+                      </div>
                     </div>
                   </div>
                 </Card>
