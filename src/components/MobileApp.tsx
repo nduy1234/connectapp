@@ -697,7 +697,11 @@ function MobileApp() {
                         <span className="text-xs text-foreground-muted">2m ago</span>
                       </div>
                       <p className="text-sm font-medium text-primary mb-1">TechFlow AI</p>
-                      <p className="text-sm text-foreground-secondary">Looking forward to our collaboration!</p>
+                      <div className="space-y-1 text-xs">
+                        <p className="text-foreground-secondary"><span className="font-medium">Location:</span> Orange, CA</p>
+                        <p className="text-foreground-secondary"><span className="font-medium">Industry:</span> Technology</p>
+                        <p className="text-foreground-secondary"><span className="font-medium">Description:</span> An AI-powered platform helping small businesses grow sales</p>
+                      </div>
                     </div>
                   </div>
                 </Card>
