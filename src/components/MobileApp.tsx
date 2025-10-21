@@ -5,6 +5,13 @@ import { Button } from '@/components/ui/button';
 import { ConversationList } from './ConversationList';
 import { ChatDetail } from './ChatDetail';
 import { ComposeMessageDialog } from './ComposeMessageDialog';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Card } from '@/components/ui/card';
+import sarahChenAvatar from '@/assets/sarah-chen-avatar.jpg';
+import michaelRodriguezAvatar from '@/assets/michael-rodriguez-avatar.jpg';
+import emilyWatsonAvatar from '@/assets/emily-watson-avatar.jpg';
+import davidKimAvatar from '@/assets/david-kim-avatar.jpg';
+import jessicaLeeAvatar from '@/assets/jessica-lee-avatar.jpg';
 interface UserData {
   name: string;
   firstName: string;
@@ -665,15 +672,107 @@ function MobileApp() {
             )
           )}
 
-          {activeTab === 'startups' && <div className="p-6">
-              <div className="glass-effect rounded-2xl p-8 shadow-xl text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-secondary to-secondary-dark rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-secondary/30">
-                  <Briefcase className="w-8 h-8 text-white" />
+          {activeTab === 'startups' && <div className="p-6 space-y-4">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-r from-secondary to-secondary-dark rounded-xl flex items-center justify-center shadow-lg shadow-secondary/30">
+                  <Briefcase className="w-6 h-6 text-white" />
                 </div>
-                <h2 className="text-2xl font-bold text-secondary mb-4">
-                  Startups
-                </h2>
-                <p className="text-foreground-secondary">Discover innovative startups and opportunities</p>
+                <div>
+                  <h2 className="text-2xl font-bold text-foreground">Startups</h2>
+                  <p className="text-sm text-foreground-secondary">Discover innovative startups</p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {/* Sarah Chen - TechFlow AI */}
+                <Card className="glass-effect p-4 cursor-pointer hover:shadow-lg transition-all duration-200 card-hover">
+                  <div className="flex items-start space-x-4">
+                    <Avatar className="h-14 w-14">
+                      <AvatarImage src={sarahChenAvatar} alt="Sarah Chen" />
+                      <AvatarFallback>SC</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between mb-1">
+                        <h3 className="font-semibold text-foreground">Sarah Chen</h3>
+                        <span className="text-xs text-foreground-muted">2m ago</span>
+                      </div>
+                      <p className="text-sm font-medium text-primary mb-1">TechFlow AI</p>
+                      <p className="text-sm text-foreground-secondary">Looking forward to our collaboration!</p>
+                    </div>
+                  </div>
+                </Card>
+
+                {/* Michael Rodriguez - FinWave */}
+                <Card className="glass-effect p-4 cursor-pointer hover:shadow-lg transition-all duration-200 card-hover">
+                  <div className="flex items-start space-x-4">
+                    <Avatar className="h-14 w-14">
+                      <AvatarImage src={michaelRodriguezAvatar} alt="Michael Rodriguez" />
+                      <AvatarFallback>MR</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between mb-1">
+                        <h3 className="font-semibold text-foreground">Michael Rodriguez</h3>
+                        <span className="text-xs text-foreground-muted">15m ago</span>
+                      </div>
+                      <p className="text-sm font-medium text-primary mb-1">FinWave</p>
+                      <p className="text-sm text-foreground-secondary">Thanks for the intro, let's connect</p>
+                    </div>
+                  </div>
+                </Card>
+
+                {/* Emily Watson - GreenTech Solutions */}
+                <Card className="glass-effect p-4 cursor-pointer hover:shadow-lg transition-all duration-200 card-hover">
+                  <div className="flex items-start space-x-4">
+                    <Avatar className="h-14 w-14">
+                      <AvatarImage src={emilyWatsonAvatar} alt="Emily Watson" />
+                      <AvatarFallback>EW</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between mb-1">
+                        <h3 className="font-semibold text-foreground">Emily Watson</h3>
+                        <span className="text-xs text-foreground-muted">1h ago</span>
+                      </div>
+                      <p className="text-sm font-medium text-primary mb-1">GreenTech Solutions</p>
+                      <p className="text-sm text-foreground-secondary">I love your approach to sustainability</p>
+                    </div>
+                  </div>
+                </Card>
+
+                {/* David Kim - HealthHub */}
+                <Card className="glass-effect p-4 cursor-pointer hover:shadow-lg transition-all duration-200 card-hover">
+                  <div className="flex items-start space-x-4">
+                    <Avatar className="h-14 w-14">
+                      <AvatarImage src={davidKimAvatar} alt="David Kim" />
+                      <AvatarFallback>DK</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between mb-1">
+                        <h3 className="font-semibold text-foreground">David Kim</h3>
+                        <span className="text-xs text-foreground-muted">3h ago</span>
+                      </div>
+                      <p className="text-sm font-medium text-primary mb-1">HealthHub</p>
+                      <p className="text-sm text-foreground-secondary">Would love to discuss potential partner...</p>
+                    </div>
+                  </div>
+                </Card>
+
+                {/* Jessica Lee - EduConnect */}
+                <Card className="glass-effect p-4 cursor-pointer hover:shadow-lg transition-all duration-200 card-hover">
+                  <div className="flex items-start space-x-4">
+                    <Avatar className="h-14 w-14">
+                      <AvatarImage src={jessicaLeeAvatar} alt="Jessica Lee" />
+                      <AvatarFallback>JL</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between mb-1">
+                        <h3 className="font-semibold text-foreground">Jessica Lee</h3>
+                        <span className="text-xs text-foreground-muted">1d ago</span>
+                      </div>
+                      <p className="text-sm font-medium text-primary mb-1">EduConnect</p>
+                      <p className="text-sm text-foreground-secondary">Great meeting you at the conference!</p>
+                    </div>
+                  </div>
+                </Card>
               </div>
             </div>}
         </div>
