@@ -705,7 +705,6 @@ function MobileApp() {
                       <div className="flex items-start justify-between mb-1">
                         <h3 className="font-semibold text-foreground">Sarah Chen</h3>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-foreground-muted">2m ago</span>
                           <Star 
                             className={`h-4 w-4 cursor-pointer transition-all ${favoriteStartups.includes('TechFlow AI') ? 'fill-yellow-500 text-yellow-500' : 'text-foreground-muted hover:text-yellow-500'}`}
                             onClick={(e) => {
@@ -736,7 +735,6 @@ function MobileApp() {
                       <div className="flex items-start justify-between mb-1">
                         <h3 className="font-semibold text-foreground">Michael Rodriguez</h3>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-foreground-muted">15m ago</span>
                           <Star 
                             className={`h-4 w-4 cursor-pointer transition-all ${favoriteStartups.includes('FinWave') ? 'fill-yellow-500 text-yellow-500' : 'text-foreground-muted hover:text-yellow-500'}`}
                             onClick={(e) => {
@@ -763,7 +761,6 @@ function MobileApp() {
                       <div className="flex items-start justify-between mb-1">
                         <h3 className="font-semibold text-foreground">Emily Watson</h3>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-foreground-muted">1h ago</span>
                           <Star 
                             className={`h-4 w-4 cursor-pointer transition-all ${favoriteStartups.includes('GreenTech Solutions') ? 'fill-yellow-500 text-yellow-500' : 'text-foreground-muted hover:text-yellow-500'}`}
                             onClick={(e) => {
@@ -790,7 +787,6 @@ function MobileApp() {
                       <div className="flex items-start justify-between mb-1">
                         <h3 className="font-semibold text-foreground">David Kim</h3>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-foreground-muted">3h ago</span>
                           <Star 
                             className={`h-4 w-4 cursor-pointer transition-all ${favoriteStartups.includes('HealthHub') ? 'fill-yellow-500 text-yellow-500' : 'text-foreground-muted hover:text-yellow-500'}`}
                             onClick={(e) => {
@@ -817,7 +813,6 @@ function MobileApp() {
                       <div className="flex items-start justify-between mb-1">
                         <h3 className="font-semibold text-foreground">Jessica Lee</h3>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-foreground-muted">1d ago</span>
                           <Star 
                             className={`h-4 w-4 cursor-pointer transition-all ${favoriteStartups.includes('EduConnect') ? 'fill-yellow-500 text-yellow-500' : 'text-foreground-muted hover:text-yellow-500'}`}
                             onClick={(e) => {
