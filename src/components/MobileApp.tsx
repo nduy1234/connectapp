@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Home, User, BookOpen, MessageCircle, Briefcase, Bell, Settings, Eye, EyeOff, Mail, Lock, ArrowLeft, Check, Loader2, Users, Calendar, Activity, Rocket, Camera, Video, Upload, Search, Plus, LogOut } from 'lucide-react';
+import { Home, User, BookOpen, MessageCircle, Briefcase, Bell, Settings, Eye, EyeOff, Mail, Lock, ArrowLeft, Check, Loader2, Users, Calendar, Activity, Rocket, Camera, Video, Upload, Search, Plus, LogOut, Star } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ConversationList } from './ConversationList';
@@ -63,6 +63,7 @@ function MobileApp() {
   const [selectedChatUserId, setSelectedChatUserId] = useState<string | null>(null);
   const [selectedChatUserName, setSelectedChatUserName] = useState<string>('');
   const [showNewMessageDialog, setShowNewMessageDialog] = useState(false);
+  const [favoriteStartups, setFavoriteStartups] = useState<string[]>([]);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
 
@@ -157,6 +158,15 @@ function MobileApp() {
     setCurrentScreen('signin');
     setActiveTab('home');
   };
+
+  const toggleFavorite = (startupName: string) => {
+    setFavoriteStartups(prev => 
+      prev.includes(startupName) 
+        ? prev.filter(name => name !== startupName)
+        : [...prev, startupName]
+    );
+  };
+  
   if (currentScreen === 'signin' || currentScreen === 'forgot-password' || currentScreen === 'reset-success') {
     return <div className="mobile-container">
         <div className="min-h-screen bg-gradient-background flex items-center justify-center p-4">
@@ -694,7 +704,16 @@ function MobileApp() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between mb-1">
                         <h3 className="font-semibold text-foreground">Sarah Chen</h3>
-                        <span className="text-xs text-foreground-muted">2m ago</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-foreground-muted">2m ago</span>
+                          <Star 
+                            className={`h-4 w-4 cursor-pointer transition-all ${favoriteStartups.includes('TechFlow AI') ? 'fill-yellow-500 text-yellow-500' : 'text-foreground-muted hover:text-yellow-500'}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleFavorite('TechFlow AI');
+                            }}
+                          />
+                        </div>
                       </div>
                       <p className="text-sm font-medium text-primary mb-1">TechFlow AI</p>
                       <div className="space-y-1 text-xs">
@@ -716,7 +735,16 @@ function MobileApp() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between mb-1">
                         <h3 className="font-semibold text-foreground">Michael Rodriguez</h3>
-                        <span className="text-xs text-foreground-muted">15m ago</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-foreground-muted">15m ago</span>
+                          <Star 
+                            className={`h-4 w-4 cursor-pointer transition-all ${favoriteStartups.includes('FinWave') ? 'fill-yellow-500 text-yellow-500' : 'text-foreground-muted hover:text-yellow-500'}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleFavorite('FinWave');
+                            }}
+                          />
+                        </div>
                       </div>
                       <p className="text-sm font-medium text-primary mb-1">FinWave</p>
                       <p className="text-sm text-foreground-secondary">Thanks for the intro, let's connect</p>
@@ -734,7 +762,16 @@ function MobileApp() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between mb-1">
                         <h3 className="font-semibold text-foreground">Emily Watson</h3>
-                        <span className="text-xs text-foreground-muted">1h ago</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-foreground-muted">1h ago</span>
+                          <Star 
+                            className={`h-4 w-4 cursor-pointer transition-all ${favoriteStartups.includes('GreenTech Solutions') ? 'fill-yellow-500 text-yellow-500' : 'text-foreground-muted hover:text-yellow-500'}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleFavorite('GreenTech Solutions');
+                            }}
+                          />
+                        </div>
                       </div>
                       <p className="text-sm font-medium text-primary mb-1">GreenTech Solutions</p>
                       <p className="text-sm text-foreground-secondary">I love your approach to sustainability</p>
@@ -752,7 +789,16 @@ function MobileApp() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between mb-1">
                         <h3 className="font-semibold text-foreground">David Kim</h3>
-                        <span className="text-xs text-foreground-muted">3h ago</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-foreground-muted">3h ago</span>
+                          <Star 
+                            className={`h-4 w-4 cursor-pointer transition-all ${favoriteStartups.includes('HealthHub') ? 'fill-yellow-500 text-yellow-500' : 'text-foreground-muted hover:text-yellow-500'}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleFavorite('HealthHub');
+                            }}
+                          />
+                        </div>
                       </div>
                       <p className="text-sm font-medium text-primary mb-1">HealthHub</p>
                       <p className="text-sm text-foreground-secondary">Would love to discuss potential partner...</p>
@@ -770,7 +816,16 @@ function MobileApp() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between mb-1">
                         <h3 className="font-semibold text-foreground">Jessica Lee</h3>
-                        <span className="text-xs text-foreground-muted">1d ago</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-foreground-muted">1d ago</span>
+                          <Star 
+                            className={`h-4 w-4 cursor-pointer transition-all ${favoriteStartups.includes('EduConnect') ? 'fill-yellow-500 text-yellow-500' : 'text-foreground-muted hover:text-yellow-500'}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleFavorite('EduConnect');
+                            }}
+                          />
+                        </div>
                       </div>
                       <p className="text-sm font-medium text-primary mb-1">EduConnect</p>
                       <p className="text-sm text-foreground-secondary">Great meeting you at the conference!</p>
