@@ -745,7 +745,11 @@ function MobileApp() {
                         </div>
                       </div>
                       <p className="text-sm font-medium text-primary mb-1">FinWave</p>
-                      <p className="text-sm text-foreground-secondary">Thanks for the intro, let's connect</p>
+                      <div className="space-y-1 text-xs">
+                        <p className="text-foreground-secondary"><span className="font-medium">Location:</span> New York, NY</p>
+                        <p className="text-foreground-secondary"><span className="font-medium">Industry:</span> Finance</p>
+                        <p className="text-foreground-secondary"><span className="font-medium">Description:</span> A fintech platform to detect credit report errors</p>
+                      </div>
                     </div>
                   </div>
                 </Card>
