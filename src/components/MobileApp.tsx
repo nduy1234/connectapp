@@ -835,7 +835,11 @@ function MobileApp() {
                         </div>
                       </div>
                       <p className="text-sm font-medium text-primary mb-1">EduConnect</p>
-                      <p className="text-sm text-foreground-secondary">Great meeting you at the conference!</p>
+                      <div className="space-y-1 text-xs">
+                        <p className="text-foreground-secondary"><span className="font-medium">Location:</span> Boston, MA</p>
+                        <p className="text-foreground-secondary"><span className="font-medium">Industry:</span> Education</p>
+                        <p className="text-foreground-secondary"><span className="font-medium">Description:</span> An education platform for first-generation college students</p>
+                      </div>
                     </div>
                   </div>
                 </Card>
