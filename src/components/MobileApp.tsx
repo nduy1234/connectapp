@@ -1001,37 +1001,39 @@ function MobileApp() {
         )}
 
         {/* Bottom Navigation */}
-        <div className="fixed bottom-0 left-0 right-0 glass-effect border-t border-border shadow-xl safe-area-inset-bottom">
-          <div className="flex justify-around items-center px-6 py-4">
-            {[{
-            id: 'home' as Tab,
-            icon: Home,
-            label: 'Home'
-          }, {
-            id: 'profile' as Tab,
-            icon: User,
-            label: 'Profile'
-          }, {
-            id: 'resource' as Tab,
-            icon: BookOpen,
-            label: 'Resource'
-          }, {
-            id: 'message' as Tab,
-            icon: MessageCircle,
-            label: 'Message'
-          }, {
-            id: 'startups' as Tab,
-            icon: Briefcase,
-            label: 'Startups'
-          }].map(({
-            id,
-            icon: Icon,
-            label
-          }) => <button key={id} onClick={() => setActiveTab(id)} className={`flex flex-col items-center justify-center min-w-[56px] py-2 px-1 rounded-lg transition-all duration-200 active:scale-95 ${activeTab === id ? 'text-primary' : 'text-foreground-muted'}`}>
-                <Icon className="w-6 h-6 mb-1" />
-                <span className="text-[10px] font-medium leading-tight">{label}</span>
-              </button>)}
-          </div>
+        <div className="fixed bottom-0 left-0 right-0 p-4 pb-6">
+          <Card className="glass-effect shadow-xl">
+            <div className="flex justify-around items-center px-2 py-3">
+              {[{
+              id: 'home' as Tab,
+              icon: Home,
+              label: 'Home'
+            }, {
+              id: 'profile' as Tab,
+              icon: User,
+              label: 'Profile'
+            }, {
+              id: 'resource' as Tab,
+              icon: BookOpen,
+              label: 'Resource'
+            }, {
+              id: 'message' as Tab,
+              icon: MessageCircle,
+              label: 'Message'
+            }, {
+              id: 'startups' as Tab,
+              icon: Briefcase,
+              label: 'Startups'
+            }].map(({
+              id,
+              icon: Icon,
+              label
+            }) => <button key={id} onClick={() => setActiveTab(id)} className={`flex flex-col items-center justify-center min-w-[56px] py-2 px-1 rounded-lg transition-all duration-200 active:scale-95 ${activeTab === id ? 'text-primary' : 'text-foreground-muted'}`}>
+                  <Icon className="w-6 h-6 mb-1" />
+                  <span className="text-[10px] font-medium leading-tight">{label}</span>
+                </button>)}
+            </div>
+          </Card>
         </div>
 
         {/* Compose Message Dialog */}
