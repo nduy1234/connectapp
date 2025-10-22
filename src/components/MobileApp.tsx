@@ -1003,7 +1003,7 @@ function MobileApp() {
         {/* Bottom Navigation */}
         <div className="fixed bottom-0 left-0 right-0 p-6">
           <Card className="glass-effect shadow-xl">
-            <div className="flex justify-around items-center px-2 py-3">
+            <div className="flex justify-around items-center px-2 py-2">
               {[{
               id: 'home' as Tab,
               icon: Home,
@@ -1028,9 +1028,9 @@ function MobileApp() {
               id,
               icon: Icon,
               label
-            }) => <button key={id} onClick={() => setActiveTab(id)} className={`flex flex-col items-center justify-center min-w-[56px] py-2 px-1 rounded-lg transition-all duration-200 active:scale-95 ${activeTab === id ? 'text-primary' : 'text-foreground-muted'}`}>
-                  <Icon className="w-6 h-6 mb-1" />
-                  <span className="text-[10px] font-medium leading-tight">{label}</span>
+            }) => <button key={id} onClick={() => setActiveTab(id)} className={`flex flex-col items-center justify-center min-w-[32px] py-1 px-1 rounded-lg transition-all duration-200 active:scale-95 ${activeTab === id ? 'text-primary' : 'text-foreground-muted'}`}>
+                  <Icon className="w-4 h-4 mb-0.5" />
+                  <span className="text-[8px] font-medium leading-tight">{label}</span>
                 </button>)}
             </div>
           </Card>
