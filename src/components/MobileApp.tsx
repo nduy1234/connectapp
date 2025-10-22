@@ -1001,7 +1001,7 @@ function MobileApp() {
         )}
 
         {/* Bottom Navigation */}
-        <div className="fixed bottom-0 left-0 right-0 p-6">
+        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 p-6 w-full max-w-xs">
           <Card className="glass-effect shadow-xl">
             <div className="flex justify-around items-center px-2 py-2">
               {[{
