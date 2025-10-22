@@ -1002,7 +1002,7 @@ function MobileApp() {
 
         {/* Bottom Navigation */}
         <div className="fixed bottom-0 left-0 right-0 glass-effect border-t border-border shadow-xl safe-area-inset-bottom">
-          <div className="flex justify-around items-center px-2 py-2">
+          <div className="flex justify-around items-center px-6 py-4">
             {[{
             id: 'home' as Tab,
             icon: Home,
