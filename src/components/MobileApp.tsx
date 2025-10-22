@@ -775,7 +775,11 @@ function MobileApp() {
                         </div>
                       </div>
                       <p className="text-sm font-medium text-primary mb-1">GreenTech Solutions</p>
-                      <p className="text-sm text-foreground-secondary">I love your approach to sustainability</p>
+                      <div className="space-y-1 text-xs">
+                        <p className="text-foreground-secondary"><span className="font-medium">Location:</span> San Francisco, CA</p>
+                        <p className="text-foreground-secondary"><span className="font-medium">Industry:</span> Technology</p>
+                        <p className="text-foreground-secondary"><span className="font-medium">Description:</span> A directory platform connecting people to local businesses</p>
+                      </div>
                     </div>
                   </div>
                 </Card>
