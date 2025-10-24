@@ -460,20 +460,6 @@ function MobileApp() {
   }
   return <div className="mobile-container">
       <div className="min-h-screen bg-gradient-background">
-        {/* Search Bar */}
-        <div className="sticky top-0 z-10 bg-gradient-background/95 backdrop-blur-sm p-4 border-b border-border/50">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground-muted w-5 h-5" />
-            <Input
-              type="text"
-              placeholder="Search founders and startups..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 glass-effect border-border/50"
-            />
-          </div>
-        </div>
-
         {/* Main Content */}
         <div className="pb-20 custom-scrollbar">
           {activeTab === 'home' && <div className="p-6 space-y-8">
@@ -776,6 +762,18 @@ function MobileApp() {
                   <Plus className="w-4 h-4" />
                   Add Startup
                 </Button>
+              </div>
+
+              {/* Search Bar */}
+              <div className="relative mb-4">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground-muted w-5 h-5" />
+                <Input
+                  type="text"
+                  placeholder="Search founders and startups..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 glass-effect border-border/50"
+                />
               </div>
 
               <div className="space-y-3">
