@@ -683,14 +683,20 @@ function MobileApp() {
           )}
 
           {activeTab === 'startups' && <div className="p-6 space-y-4">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-12 h-12 bg-gradient-to-r from-secondary to-secondary-dark rounded-xl flex items-center justify-center shadow-lg shadow-secondary/30">
-                  <Briefcase className="w-6 h-6 text-white" />
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-gradient-to-r from-secondary to-secondary-dark rounded-xl flex items-center justify-center shadow-lg shadow-secondary/30">
+                    <Briefcase className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-foreground">Startups</h2>
+                    <p className="text-sm text-foreground-secondary">Discover innovative startups</p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-foreground">Startups</h2>
-                  <p className="text-sm text-foreground-secondary">Discover innovative startups</p>
-                </div>
+                <Button size="sm" className="gap-2">
+                  <Plus className="w-4 h-4" />
+                  Add Startup
+                </Button>
               </div>
 
               <div className="space-y-3">
