@@ -64,8 +64,73 @@ function MobileApp() {
   const [selectedChatUserName, setSelectedChatUserName] = useState<string>('');
   const [showNewMessageDialog, setShowNewMessageDialog] = useState(false);
   const [favoriteStartups, setFavoriteStartups] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const imageInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
+
+  // Startups data
+  const startups = [
+    { 
+      id: 1, 
+      founderName: 'Sarah Chen', 
+      startupName: 'TechFlow AI', 
+      location: 'Orange, CA', 
+      industry: 'Technology', 
+      description: 'An AI-powered platform helping small businesses grow sales',
+      avatar: sarahChenAvatar,
+      initials: 'SC'
+    },
+    { 
+      id: 2, 
+      founderName: 'Michael Rodriguez', 
+      startupName: 'FinWave', 
+      location: 'New York, NY', 
+      industry: 'Finance', 
+      description: 'A fintech platform to detect credit report errors',
+      avatar: michaelRodriguezAvatar,
+      initials: 'MR'
+    },
+    { 
+      id: 3, 
+      founderName: 'Emily Watson', 
+      startupName: 'GreenTech Solutions', 
+      location: 'San Francisco, CA', 
+      industry: 'Technology', 
+      description: 'A directory platform connecting people to local businesses',
+      avatar: emilyWatsonAvatar,
+      initials: 'EW'
+    },
+    { 
+      id: 4, 
+      founderName: 'David Kim', 
+      startupName: 'HealthHub', 
+      location: 'Boston, MA', 
+      industry: 'Healthcare', 
+      description: 'A health platform to support mental health for the seniors.',
+      avatar: davidKimAvatar,
+      initials: 'DK'
+    },
+    { 
+      id: 5, 
+      founderName: 'Jessica Lee', 
+      startupName: 'EduConnect', 
+      location: 'Boston, MA', 
+      industry: 'Education', 
+      description: 'An education platform for first-generation college students',
+      avatar: jessicaLeeAvatar,
+      initials: 'JL'
+    },
+  ];
+
+  // Filter startups based on search query
+  const filteredStartups = startups.filter(startup => 
+    searchQuery === '' || 
+    startup.founderName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    startup.startupName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    startup.industry.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    startup.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    startup.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Sample conversation data
   const conversations = [
@@ -395,6 +460,20 @@ function MobileApp() {
   }
   return <div className="mobile-container">
       <div className="min-h-screen bg-gradient-background">
+        {/* Search Bar */}
+        <div className="sticky top-0 z-10 bg-gradient-background/95 backdrop-blur-sm p-4 border-b border-border/50">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground-muted w-5 h-5" />
+            <Input
+              type="text"
+              placeholder="Search founders and startups..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 glass-effect border-border/50"
+            />
+          </div>
+        </div>
+
         {/* Main Content */}
         <div className="pb-20 custom-scrollbar">
           {activeTab === 'home' && <div className="p-6 space-y-8">
@@ -700,155 +779,42 @@ function MobileApp() {
               </div>
 
               <div className="space-y-3">
-                {/* Sarah Chen - TechFlow AI */}
-                <Card className="glass-effect p-4 cursor-pointer hover:shadow-lg transition-all duration-200 card-hover">
-                  <div className="flex items-start space-x-4">
-                    <Avatar className="h-14 w-14">
-                      <AvatarImage src={sarahChenAvatar} alt="Sarah Chen" />
-                      <AvatarFallback>SC</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between mb-1">
-                        <h3 className="font-semibold text-foreground">Sarah Chen</h3>
-                        <div className="flex items-center gap-2">
-                          <Star 
-                            className={`h-4 w-4 cursor-pointer transition-all ${favoriteStartups.includes('TechFlow AI') ? 'fill-yellow-500 text-yellow-500' : 'text-foreground-muted hover:text-yellow-500'}`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleFavorite('TechFlow AI');
-                            }}
-                          />
+                {filteredStartups.length === 0 ? (
+                  <div className="glass-effect rounded-2xl p-8 text-center">
+                    <p className="text-foreground-secondary">No startups found matching your search.</p>
+                  </div>
+                ) : (
+                  filteredStartups.map((startup) => (
+                    <Card key={startup.id} className="glass-effect p-4 cursor-pointer hover:shadow-lg transition-all duration-200 card-hover">
+                      <div className="flex items-start space-x-4">
+                        <Avatar className="h-14 w-14">
+                          <AvatarImage src={startup.avatar} alt={startup.founderName} />
+                          <AvatarFallback>{startup.initials}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between mb-1">
+                            <h3 className="font-semibold text-foreground">{startup.founderName}</h3>
+                            <div className="flex items-center gap-2">
+                              <Star 
+                                className={`h-4 w-4 cursor-pointer transition-all ${favoriteStartups.includes(startup.startupName) ? 'fill-yellow-500 text-yellow-500' : 'text-foreground-muted hover:text-yellow-500'}`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleFavorite(startup.startupName);
+                                }}
+                              />
+                            </div>
+                          </div>
+                          <p className="text-sm font-medium text-primary mb-1">{startup.startupName}</p>
+                          <div className="space-y-1 text-xs">
+                            <p className="text-foreground-secondary"><span className="font-medium">Location:</span> {startup.location}</p>
+                            <p className="text-foreground-secondary"><span className="font-medium">Industry:</span> {startup.industry}</p>
+                            <p className="text-foreground-secondary"><span className="font-medium">Description:</span> {startup.description}</p>
+                          </div>
                         </div>
                       </div>
-                      <p className="text-sm font-medium text-primary mb-1">TechFlow AI</p>
-                      <div className="space-y-1 text-xs">
-                        <p className="text-foreground-secondary"><span className="font-medium">Location:</span> Orange, CA</p>
-                        <p className="text-foreground-secondary"><span className="font-medium">Industry:</span> Technology</p>
-                        <p className="text-foreground-secondary"><span className="font-medium">Description:</span> An AI-powered platform helping small businesses grow sales</p>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-
-                {/* Michael Rodriguez - FinWave */}
-                <Card className="glass-effect p-4 cursor-pointer hover:shadow-lg transition-all duration-200 card-hover">
-                  <div className="flex items-start space-x-4">
-                    <Avatar className="h-14 w-14">
-                      <AvatarImage src={michaelRodriguezAvatar} alt="Michael Rodriguez" />
-                      <AvatarFallback>MR</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between mb-1">
-                        <h3 className="font-semibold text-foreground">Michael Rodriguez</h3>
-                        <div className="flex items-center gap-2">
-                          <Star 
-                            className={`h-4 w-4 cursor-pointer transition-all ${favoriteStartups.includes('FinWave') ? 'fill-yellow-500 text-yellow-500' : 'text-foreground-muted hover:text-yellow-500'}`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleFavorite('FinWave');
-                            }}
-                          />
-                        </div>
-                      </div>
-                      <p className="text-sm font-medium text-primary mb-1">FinWave</p>
-                      <div className="space-y-1 text-xs">
-                        <p className="text-foreground-secondary"><span className="font-medium">Location:</span> New York, NY</p>
-                        <p className="text-foreground-secondary"><span className="font-medium">Industry:</span> Finance</p>
-                        <p className="text-foreground-secondary"><span className="font-medium">Description:</span> A fintech platform to detect credit report errors</p>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-
-                {/* Emily Watson - GreenTech Solutions */}
-                <Card className="glass-effect p-4 cursor-pointer hover:shadow-lg transition-all duration-200 card-hover">
-                  <div className="flex items-start space-x-4">
-                    <Avatar className="h-14 w-14">
-                      <AvatarImage src={emilyWatsonAvatar} alt="Emily Watson" />
-                      <AvatarFallback>EW</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between mb-1">
-                        <h3 className="font-semibold text-foreground">Emily Watson</h3>
-                        <div className="flex items-center gap-2">
-                          <Star 
-                            className={`h-4 w-4 cursor-pointer transition-all ${favoriteStartups.includes('GreenTech Solutions') ? 'fill-yellow-500 text-yellow-500' : 'text-foreground-muted hover:text-yellow-500'}`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleFavorite('GreenTech Solutions');
-                            }}
-                          />
-                        </div>
-                      </div>
-                      <p className="text-sm font-medium text-primary mb-1">GreenTech Solutions</p>
-                      <div className="space-y-1 text-xs">
-                        <p className="text-foreground-secondary"><span className="font-medium">Location:</span> San Francisco, CA</p>
-                        <p className="text-foreground-secondary"><span className="font-medium">Industry:</span> Technology</p>
-                        <p className="text-foreground-secondary"><span className="font-medium">Description:</span> A directory platform connecting people to local businesses</p>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-
-                {/* David Kim - HealthHub */}
-                <Card className="glass-effect p-4 cursor-pointer hover:shadow-lg transition-all duration-200 card-hover">
-                  <div className="flex items-start space-x-4">
-                    <Avatar className="h-14 w-14">
-                      <AvatarImage src={davidKimAvatar} alt="David Kim" />
-                      <AvatarFallback>DK</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between mb-1">
-                        <h3 className="font-semibold text-foreground">David Kim</h3>
-                        <div className="flex items-center gap-2">
-                          <Star 
-                            className={`h-4 w-4 cursor-pointer transition-all ${favoriteStartups.includes('HealthHub') ? 'fill-yellow-500 text-yellow-500' : 'text-foreground-muted hover:text-yellow-500'}`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleFavorite('HealthHub');
-                            }}
-                          />
-                        </div>
-                      </div>
-                      <p className="text-sm font-medium text-primary mb-1">HealthHub</p>
-                      <div className="space-y-1 text-xs">
-                        <p className="text-foreground-secondary"><span className="font-medium">Location:</span> Boston, MA</p>
-                        <p className="text-foreground-secondary"><span className="font-medium">Industry:</span> Healthcare</p>
-                        <p className="text-foreground-secondary"><span className="font-medium">Description:</span> A health platform to support mental health for the seniors.</p>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-
-                {/* Jessica Lee - EduConnect */}
-                <Card className="glass-effect p-4 cursor-pointer hover:shadow-lg transition-all duration-200 card-hover">
-                  <div className="flex items-start space-x-4">
-                    <Avatar className="h-14 w-14">
-                      <AvatarImage src={jessicaLeeAvatar} alt="Jessica Lee" />
-                      <AvatarFallback>JL</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between mb-1">
-                        <h3 className="font-semibold text-foreground">Jessica Lee</h3>
-                        <div className="flex items-center gap-2">
-                          <Star 
-                            className={`h-4 w-4 cursor-pointer transition-all ${favoriteStartups.includes('EduConnect') ? 'fill-yellow-500 text-yellow-500' : 'text-foreground-muted hover:text-yellow-500'}`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleFavorite('EduConnect');
-                            }}
-                          />
-                        </div>
-                      </div>
-                      <p className="text-sm font-medium text-primary mb-1">EduConnect</p>
-                      <div className="space-y-1 text-xs">
-                        <p className="text-foreground-secondary"><span className="font-medium">Location:</span> Boston, MA</p>
-                        <p className="text-foreground-secondary"><span className="font-medium">Industry:</span> Education</p>
-                        <p className="text-foreground-secondary"><span className="font-medium">Description:</span> An education platform for first-generation college students</p>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
+                    </Card>
+                  ))
+                )}
               </div>
             </div>}
         </div>
