@@ -1029,7 +1029,7 @@ function MobileApp() {
               icon: Icon,
               label
             }) => <button key={id} onClick={() => setActiveTab(id)} className={`flex flex-col items-center justify-center min-w-[32px] py-1 px-1 rounded-lg transition-all duration-200 active:scale-95 ${activeTab === id ? 'text-primary' : 'text-foreground-muted'}`}>
-                  <Icon className="w-4 h-4 mb-0.5" />
+                  <Icon className="w-6 h-6 mb-0.5" />
                   <span className="text-[8px] font-medium leading-tight">{label}</span>
                 </button>)}
             </div>
