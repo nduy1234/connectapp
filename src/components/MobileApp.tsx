@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Home, User, BookOpen, MessageCircle, Briefcase, Bell, Settings, Eye, EyeOff, Mail, Lock, ArrowLeft, Check, Loader2, Users, Calendar, Activity, Rocket, Camera, Video, Upload, Search, Plus, LogOut, Star } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,8 @@ import { ChatDetail } from './ChatDetail';
 import { ComposeMessageDialog } from './ComposeMessageDialog';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 import sarahChenAvatar from '@/assets/sarah-chen-avatar.jpg';
 import michaelRodriguezAvatar from '@/assets/michael-rodriguez-avatar.jpg';
 import emilyWatsonAvatar from '@/assets/emily-watson-avatar.jpg';
@@ -35,6 +37,8 @@ type Screen = 'signin' | 'forgot-password' | 'reset-success' | 'welcome' | 'main
 type Tab = 'home' | 'profile' | 'resource' | 'message' | 'startups';
 type WelcomeOption = 'network' | 'collaborate' | 'explore';
 function MobileApp() {
+  const { user: authUser, loading: authLoading, signIn, signUp, signOut, resetPassword, saveProfile, loadProfile, uploadFile } = useAuth();
+  const { toast } = useToast();
   const [currentScreen, setCurrentScreen] = useState<Screen>('signin');
   const [activeTab, setActiveTab] = useState<Tab>('home');
   const [isSignUp, setIsSignUp] = useState(false);
@@ -53,6 +57,8 @@ function MobileApp() {
     goals: '',
     favoriteStartup: ''
   });
+  const [profileImageUrl, setProfileImageUrl] = useState<string>('');
+  const [videoUrl, setVideoUrl] = useState<string>('');
   const [showPrivacySettings, setShowPrivacySettings] = useState(false);
   const [profileVisibility, setProfileVisibility] = useState<'public' | 'private'>('public');
   const [messagingPrivacy, setMessagingPrivacy] = useState<'anyone' | 'favorites'>('anyone');
@@ -67,6 +73,42 @@ function MobileApp() {
   const [searchQuery, setSearchQuery] = useState('');
   const imageInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
+
+  // Handle authentication state changes
+  useEffect(() => {
+    if (authUser && currentScreen === 'signin') {
+      const firstName = authUser.user_metadata?.name?.split(' ')[0] || 'User';
+      setUser({
+        name: authUser.user_metadata?.name || 'User',
+        firstName: firstName,
+        email: authUser.email || ''
+      });
+      setCurrentScreen('welcome');
+    } else if (!authUser && currentScreen !== 'signin' && currentScreen !== 'forgot-password' && currentScreen !== 'reset-success') {
+      setCurrentScreen('signin');
+      setUser(null);
+    }
+  }, [authUser, currentScreen]);
+
+  // Load profile data when user is authenticated and on main screen
+  useEffect(() => {
+    if (authUser && currentScreen === 'main') {
+      loadProfile().then(({ data }) => {
+        if (data) {
+          setProfileData({
+            startupStory: data.startup_story || '',
+            companyName: data.company_name || '',
+            location: data.location || '',
+            industry: data.industry || '',
+            goals: data.goals || '',
+            favoriteStartup: data.favorite_startup || ''
+          });
+          setProfileImageUrl(data.profile_image_url || '');
+          setVideoUrl(data.video_url || '');
+        }
+      });
+    }
+  }, [authUser, currentScreen]);
 
   // Startups data
   const startups = [
@@ -168,38 +210,23 @@ function MobileApp() {
   };
   const handleAuth = async () => {
     setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      const firstName = isSignUp ? formData.name.split(' ')[0] : 'John';
-      setUser({
-        name: isSignUp ? formData.name : 'John Doe',
-        firstName: firstName,
-        email: formData.email
-      });
-      setCurrentScreen('welcome');
-      setIsLoading(false);
-    }, 2000);
+    
+    if (isSignUp) {
+      await signUp(formData.email, formData.password, formData.name);
+    } else {
+      await signIn(formData.email, formData.password);
+    }
+    
+    setIsLoading(false);
   };
-  const handleSocialAuth = async (provider: 'google' | 'apple') => {
-    setIsLoading(true);
-    setTimeout(() => {
-      const fullName = provider === 'google' ? 'Google User' : 'Apple User';
-      const firstName = fullName.split(' ')[0];
-      setUser({
-        name: fullName,
-        firstName: firstName,
-        email: 'user@example.com'
-      });
-      setCurrentScreen('welcome');
-      setIsLoading(false);
-    }, 2000);
-  };
+
   const handleForgotPassword = async () => {
     setIsLoading(true);
-    setTimeout(() => {
+    const { error } = await resetPassword(formData.resetEmail);
+    if (!error) {
       setCurrentScreen('reset-success');
-      setIsLoading(false);
-    }, 2000);
+    }
+    setIsLoading(false);
   };
   const handleOptionToggle = (option: WelcomeOption) => {
     setSelectedOptions(prev => prev.includes(option) ? prev.filter(item => item !== option) : [...prev, option]);
@@ -207,21 +234,62 @@ function MobileApp() {
   const handleSaveProfile = async () => {
     setIsSaving(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      // Show success notification
-      console.log('Profile saved:', profileData);
+    try {
+      // Upload images/videos if selected
+      let imageUrl = profileImageUrl;
+      let vidUrl = videoUrl;
+
+      if (selectedImage) {
+        const { url } = await uploadFile(selectedImage, 'profile-images');
+        if (url) imageUrl = url;
+      }
+
+      if (selectedVideo) {
+        const { url } = await uploadFile(selectedVideo, 'profile-videos');
+        if (url) vidUrl = url;
+      }
+
+      // Save profile data
+      await saveProfile({
+        startup_story: profileData.startupStory,
+        company_name: profileData.companyName,
+        location: profileData.location,
+        industry: profileData.industry,
+        goals: profileData.goals,
+        favorite_startup: profileData.favoriteStartup,
+        profile_image_url: imageUrl,
+        video_url: vidUrl
+      });
+
+      setProfileImageUrl(imageUrl);
+      setVideoUrl(vidUrl);
+      setSelectedImage(null);
+      setSelectedVideo(null);
+    } catch (error) {
+      console.error('Error saving profile:', error);
+    } finally {
       setIsSaving(false);
-    }, 1500);
+    }
   };
   const handleWelcomeNext = () => {
     setCurrentScreen('main');
   };
   
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await signOut();
     setUser(null);
     setCurrentScreen('signin');
     setActiveTab('home');
+    setProfileData({
+      startupStory: '',
+      companyName: '',
+      location: '',
+      industry: '',
+      goals: '',
+      favoriteStartup: ''
+    });
+    setProfileImageUrl('');
+    setVideoUrl('');
   };
 
   const toggleFavorite = (startupName: string) => {
@@ -300,7 +368,15 @@ function MobileApp() {
                       </div>
 
                       <div className="space-y-3">
-                        <button type="button" onClick={() => handleSocialAuth('google')} disabled={isLoading} className="w-full flex items-center justify-center px-4 py-3 border border-border rounded-xl glass-effect hover:bg-surface-elevated focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-200 button-hover-scale disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+                        <button type="button" onClick={async () => {
+                          setIsLoading(true);
+                          // Social auth not implemented yet
+                          toast({
+                            title: "Coming soon",
+                            description: "Social authentication will be available soon.",
+                          });
+                          setIsLoading(false);
+                        }} disabled={isLoading} className="w-full flex items-center justify-center px-4 py-3 border border-border rounded-xl glass-effect hover:bg-surface-elevated focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-200 button-hover-scale disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
                           <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
                             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
@@ -310,7 +386,15 @@ function MobileApp() {
                           Continue with Google
                         </button>
 
-                        <button type="button" onClick={() => handleSocialAuth('apple')} disabled={isLoading} className="w-full flex items-center justify-center px-4 py-3 bg-foreground hover:bg-foreground-secondary text-background rounded-xl focus:outline-none focus:ring-2 focus:ring-foreground transition-all duration-200 button-hover-scale disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+                        <button type="button" onClick={async () => {
+                          setIsLoading(true);
+                          // Social auth not implemented yet
+                          toast({
+                            title: "Coming soon",
+                            description: "Social authentication will be available soon.",
+                          });
+                          setIsLoading(false);
+                        }} disabled={isLoading} className="w-full flex items-center justify-center px-4 py-3 bg-foreground hover:bg-foreground-secondary text-background rounded-xl focus:outline-none focus:ring-2 focus:ring-foreground transition-all duration-200 button-hover-scale disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
                           <svg className="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
                           </svg>
@@ -554,9 +638,15 @@ function MobileApp() {
               <div className="glass-effect rounded-2xl p-8 shadow-xl text-center">
                 {/* Profile Image Preview */}
                 <div className="flex justify-center mb-6">
-                  {selectedImage ? <img src={URL.createObjectURL(selectedImage)} alt="Profile Preview" className="w-24 h-24 rounded-3xl object-cover shadow-glow border-2 border-primary/20" /> : <div className="w-24 h-24 bg-gradient-primary rounded-3xl flex items-center justify-center shadow-glow">
+                  {selectedImage ? (
+                    <img src={URL.createObjectURL(selectedImage)} alt="Profile Preview" className="w-24 h-24 rounded-3xl object-cover shadow-glow border-2 border-primary/20" />
+                  ) : profileImageUrl ? (
+                    <img src={profileImageUrl} alt="Profile" className="w-24 h-24 rounded-3xl object-cover shadow-glow border-2 border-primary/20" />
+                  ) : (
+                    <div className="w-24 h-24 bg-gradient-primary rounded-3xl flex items-center justify-center shadow-glow">
                       <User className="w-12 h-12 text-white" />
-                    </div>}
+                    </div>
+                  )}
                 </div>
                 <h2 className="text-2xl font-bold gradient-text mb-2">
                   {user?.name || 'Your Profile'}

@@ -31,12 +31,15 @@ export const useAuth = () => {
 
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
+      const redirectUrl = `${window.location.origin}/`;
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
+          emailRedirectTo: redirectUrl,
           data: {
-            full_name: fullName,
+            name: fullName,
           },
         },
       });
@@ -45,7 +48,7 @@ export const useAuth = () => {
 
       toast({
         title: 'Success!',
-        description: 'Please check your email to verify your account.',
+        description: 'Account created successfully. You\'re now signed in.',
       });
 
       return { data, error: null };
@@ -105,7 +108,7 @@ export const useAuth = () => {
   const resetPassword = async (email: string) => {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: `${window.location.origin}/`,
       });
 
       if (error) throw error;
@@ -126,6 +129,82 @@ export const useAuth = () => {
     }
   };
 
+  const saveProfile = async (profileData: any) => {
+    if (!user) throw new Error('No user logged in');
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          ...profileData,
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: 'Profile saved',
+        description: 'Your profile has been updated successfully.',
+      });
+
+      return { error: null };
+    } catch (error: any) {
+      toast({
+        title: 'Save failed',
+        description: error.message,
+        variant: 'destructive',
+      });
+      return { error };
+    }
+  };
+
+  const loadProfile = async () => {
+    if (!user) return { data: null, error: null };
+
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error && error.code !== 'PGRST116') throw error;
+
+      return { data, error: null };
+    } catch (error: any) {
+      console.error('Error loading profile:', error);
+      return { data: null, error };
+    }
+  };
+
+  const uploadFile = async (file: File, bucket: 'profile-images' | 'profile-videos') => {
+    if (!user) throw new Error('No user logged in');
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from(bucket)
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from(bucket)
+        .getPublicUrl(fileName);
+
+      return { url: publicUrl, error: null };
+    } catch (error: any) {
+      toast({
+        title: 'Upload failed',
+        description: error.message,
+        variant: 'destructive',
+      });
+      return { url: null, error };
+    }
+  };
+
   return {
     user,
     session,
@@ -134,5 +213,8 @@ export const useAuth = () => {
     signIn,
     signOut,
     resetPassword,
+    saveProfile,
+    loadProfile,
+    uploadFile,
   };
 };
