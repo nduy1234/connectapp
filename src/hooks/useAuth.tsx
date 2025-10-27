@@ -69,7 +69,13 @@ export const useAuth = () => {
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        // Provide more helpful error messages
+        if (error.message.includes('Invalid login credentials')) {
+          throw new Error('Invalid email or password. Please check your credentials or sign up if you don\'t have an account yet.');
+        }
+        throw error;
+      }
 
       toast({
         title: 'Welcome back!',
@@ -79,7 +85,7 @@ export const useAuth = () => {
       return { data, error: null };
     } catch (error: any) {
       toast({
-        title: 'Error',
+        title: 'Sign in failed',
         description: error.message,
         variant: 'destructive',
       });

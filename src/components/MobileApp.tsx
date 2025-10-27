@@ -404,13 +404,27 @@ function MobileApp() {
                     </>}
                 </form>
 
-                <div className="mt-8 text-center">
+                <div className="mt-8 text-center space-y-2">
                   <p className="text-foreground-secondary">
                     {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
-                    <button onClick={() => setIsSignUp(!isSignUp)} className="text-primary hover:text-primary-dark font-semibold transition-colors">
+                    <button onClick={() => {
+                      setIsSignUp(!isSignUp);
+                      // Clear form when switching
+                      setFormData({
+                        email: '',
+                        password: '',
+                        name: '',
+                        resetEmail: ''
+                      });
+                    }} className="text-primary hover:text-primary-dark font-semibold transition-colors">
                       {isSignUp ? 'Sign In' : 'Sign Up'}
                     </button>
                   </p>
+                  {!isSignUp && (
+                    <p className="text-xs text-foreground-muted">
+                      New here? Click "Sign Up" above to create an account first
+                    </p>
+                  )}
                 </div>
               </div>}
 
