@@ -37,7 +37,7 @@ type Screen = 'signin' | 'forgot-password' | 'reset-success' | 'welcome' | 'main
 type Tab = 'home' | 'profile' | 'resource' | 'message' | 'startups';
 type WelcomeOption = 'network' | 'collaborate' | 'explore';
 function MobileApp() {
-  const { user: authUser, loading: authLoading, signIn, signUp, signOut, resetPassword, saveProfile, loadProfile, uploadFile } = useAuth();
+  const { user: authUser, loading: authLoading, signIn, signUp, signInWithGoogle, signInWithApple, signOut, resetPassword, saveProfile, loadProfile, uploadFile } = useAuth();
   const { toast } = useToast();
   const [currentScreen, setCurrentScreen] = useState<Screen>('signin');
   const [activeTab, setActiveTab] = useState<Tab>('home');
@@ -370,11 +370,7 @@ function MobileApp() {
                       <div className="space-y-3">
                         <button type="button" onClick={async () => {
                           setIsLoading(true);
-                          // Social auth not implemented yet
-                          toast({
-                            title: "Coming soon",
-                            description: "Social authentication will be available soon.",
-                          });
+                          await signInWithGoogle();
                           setIsLoading(false);
                         }} disabled={isLoading} className="w-full flex items-center justify-center px-4 py-3 border border-border rounded-xl glass-effect hover:bg-surface-elevated focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-200 button-hover-scale disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
                           <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
@@ -388,11 +384,7 @@ function MobileApp() {
 
                         <button type="button" onClick={async () => {
                           setIsLoading(true);
-                          // Social auth not implemented yet
-                          toast({
-                            title: "Coming soon",
-                            description: "Social authentication will be available soon.",
-                          });
+                          await signInWithApple();
                           setIsLoading(false);
                         }} disabled={isLoading} className="w-full flex items-center justify-center px-4 py-3 bg-foreground hover:bg-foreground-secondary text-background rounded-xl focus:outline-none focus:ring-2 focus:ring-foreground transition-all duration-200 button-hover-scale disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
                           <svg className="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
