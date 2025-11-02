@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ConversationList } from './ConversationList';
 import { ChatDetail } from './ChatDetail';
 import { ComposeMessageDialog } from './ComposeMessageDialog';
+import { AddStartupDialog } from './AddStartupDialog';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
@@ -69,6 +70,7 @@ function MobileApp() {
   const [selectedChatUserId, setSelectedChatUserId] = useState<string | null>(null);
   const [selectedChatUserName, setSelectedChatUserName] = useState<string>('');
   const [showNewMessageDialog, setShowNewMessageDialog] = useState(false);
+  const [showAddStartupDialog, setShowAddStartupDialog] = useState(false);
   const [favoriteStartups, setFavoriteStartups] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -849,7 +851,7 @@ function MobileApp() {
                   <h2 className="text-2xl font-bold text-foreground">Startups</h2>
                   <p className="text-sm text-foreground-secondary">Discover innovative startups</p>
                 </div>
-                <Button size="sm" className="gap-2">
+                <Button size="sm" className="gap-2" onClick={() => setShowAddStartupDialog(true)}>
                   <Plus className="w-4 h-4" />
                   Add Startup
                 </Button>
@@ -1105,6 +1107,12 @@ function MobileApp() {
             setSelectedChatUserId(contactId.toString());
             setSelectedChatUserName(contactName);
           }}
+        />
+
+        {/* Add Startup Dialog */}
+        <AddStartupDialog
+          open={showAddStartupDialog}
+          onOpenChange={setShowAddStartupDialog}
         />
       </div>
     </div>;
