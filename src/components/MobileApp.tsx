@@ -846,11 +846,15 @@ function MobileApp() {
           )}
 
           {activeTab === 'startups' && <div className="p-6 space-y-4">
-              <div className="mb-6">
+              <div className="flex items-center justify-between mb-6">
                 <div>
                   <h2 className="text-2xl font-bold text-foreground">Startups</h2>
                   <p className="text-sm text-foreground-secondary">Discover innovative startups</p>
                 </div>
+                <Button size="sm" className="gap-2" onClick={() => setShowAddStartupDialog(true)}>
+                  <Plus className="w-4 h-4" />
+                  Add Startup
+                </Button>
               </div>
 
               {/* Search Bar */}
@@ -1104,17 +1108,6 @@ function MobileApp() {
             setSelectedChatUserName(contactName);
           }}
         />
-
-        {/* Floating Action Button for Add Startup */}
-        {activeTab === 'startups' && (
-          <button
-            onClick={() => setShowAddStartupDialog(true)}
-            className="fixed bottom-24 right-6 w-14 h-14 bg-gradient-primary text-white rounded-full shadow-glow hover:shadow-xl flex items-center justify-center transition-all duration-200 button-hover-scale z-40"
-            aria-label="Add Startup"
-          >
-            <Plus className="w-6 h-6" />
-          </button>
-        )}
 
         {/* Add Startup Dialog */}
         <AddStartupDialog
