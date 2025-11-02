@@ -56,6 +56,45 @@ export type Database = {
         }
         Relationships: []
       }
+      startups: {
+        Row: {
+          created_at: string
+          description: string
+          founder_name: string
+          id: string
+          image_url: string | null
+          industry: string
+          location: string
+          startup_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          founder_name: string
+          id?: string
+          image_url?: string | null
+          industry: string
+          location: string
+          startup_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          founder_name?: string
+          id?: string
+          image_url?: string | null
+          industry?: string
+          location?: string
+          startup_name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

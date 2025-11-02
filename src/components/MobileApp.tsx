@@ -10,6 +10,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import sarahChenAvatar from '@/assets/sarah-chen-avatar.jpg';
 import michaelRodriguezAvatar from '@/assets/michael-rodriguez-avatar.jpg';
 import emilyWatsonAvatar from '@/assets/emily-watson-avatar.jpg';
@@ -73,6 +74,8 @@ function MobileApp() {
   const [showAddStartupDialog, setShowAddStartupDialog] = useState(false);
   const [favoriteStartups, setFavoriteStartups] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [startups, setStartups] = useState<any[]>([]);
+  const [isLoadingStartups, setIsLoadingStartups] = useState(false);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
 
@@ -112,65 +115,42 @@ function MobileApp() {
     }
   }, [authUser, currentScreen]);
 
-  // Startups data
-  const startups = [
-    { 
-      id: 1, 
-      founderName: 'Sarah Chen', 
-      startupName: 'TechFlow AI', 
-      location: 'Orange, CA', 
-      industry: 'Technology', 
-      description: 'An AI-powered platform helping small businesses grow sales',
-      avatar: sarahChenAvatar,
-      initials: 'SC'
-    },
-    { 
-      id: 2, 
-      founderName: 'Michael Rodriguez', 
-      startupName: 'FinWave', 
-      location: 'New York, NY', 
-      industry: 'Finance', 
-      description: 'A fintech platform to detect credit report errors',
-      avatar: michaelRodriguezAvatar,
-      initials: 'MR'
-    },
-    { 
-      id: 3, 
-      founderName: 'Emily Watson', 
-      startupName: 'GreenTech Solutions', 
-      location: 'San Francisco, CA', 
-      industry: 'Technology', 
-      description: 'A directory platform connecting people to local businesses',
-      avatar: emilyWatsonAvatar,
-      initials: 'EW'
-    },
-    { 
-      id: 4, 
-      founderName: 'David Kim', 
-      startupName: 'HealthHub', 
-      location: 'Boston, MA', 
-      industry: 'Healthcare', 
-      description: 'A health platform to support mental health for the seniors.',
-      avatar: davidKimAvatar,
-      initials: 'DK'
-    },
-    { 
-      id: 5, 
-      founderName: 'Jessica Lee', 
-      startupName: 'EduConnect', 
-      location: 'Boston, MA', 
-      industry: 'Education', 
-      description: 'An education platform for first-generation college students',
-      avatar: jessicaLeeAvatar,
-      initials: 'JL'
-    },
-  ];
+  // Load startups from database
+  const loadStartups = async () => {
+    setIsLoadingStartups(true);
+    try {
+      const { data, error } = await supabase
+        .from('startups')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      setStartups(data || []);
+    } catch (error) {
+      console.error('Error loading startups:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load startups',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsLoadingStartups(false);
+    }
+  };
+
+  // Load startups when authenticated and on main screen
+  useEffect(() => {
+    if (authUser && currentScreen === 'main') {
+      loadStartups();
+    }
+  }, [authUser, currentScreen]);
 
   // Filter startups based on search query
   const filteredStartups = startups.filter(startup => 
     searchQuery === '' || 
-    startup.founderName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    startup.startupName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    startup.founder_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    startup.startup_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     startup.industry.toLowerCase().includes(searchQuery.toLowerCase()) ||
     startup.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
     startup.description.toLowerCase().includes(searchQuery.toLowerCase())
@@ -870,41 +850,56 @@ function MobileApp() {
               </div>
 
               <div className="space-y-3">
-                {filteredStartups.length === 0 ? (
+                {isLoadingStartups ? (
                   <div className="glass-effect rounded-2xl p-8 text-center">
-                    <p className="text-foreground-secondary">No startups found matching your search.</p>
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2 text-primary" />
+                    <p className="text-foreground-secondary">Loading startups...</p>
+                  </div>
+                ) : filteredStartups.length === 0 ? (
+                  <div className="glass-effect rounded-2xl p-8 text-center">
+                    <p className="text-foreground-secondary">
+                      {searchQuery ? 'No startups found matching your search.' : 'No startups yet. Be the first to add one!'}
+                    </p>
                   </div>
                 ) : (
-                  filteredStartups.map((startup) => (
-                    <Card key={startup.id} className="glass-effect p-4 cursor-pointer hover:shadow-lg transition-all duration-200 card-hover">
-                      <div className="flex items-start space-x-4">
-                        <Avatar className="h-14 w-14">
-                          <AvatarImage src={startup.avatar} alt={startup.founderName} />
-                          <AvatarFallback>{startup.initials}</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between mb-1">
-                            <h3 className="font-semibold text-foreground">{startup.founderName}</h3>
-                            <div className="flex items-center gap-2">
-                              <Star 
-                                className={`h-4 w-4 cursor-pointer transition-all ${favoriteStartups.includes(startup.startupName) ? 'fill-yellow-500 text-yellow-500' : 'text-foreground-muted hover:text-yellow-500'}`}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleFavorite(startup.startupName);
-                                }}
-                              />
+                  filteredStartups.map((startup) => {
+                    const initials = startup.founder_name
+                      .split(' ')
+                      .map((n: string) => n[0])
+                      .join('')
+                      .toUpperCase();
+                    
+                    return (
+                      <Card key={startup.id} className="glass-effect p-4 cursor-pointer hover:shadow-lg transition-all duration-200 card-hover">
+                        <div className="flex items-start space-x-4">
+                          <Avatar className="h-14 w-14">
+                            <AvatarImage src={startup.image_url} alt={startup.founder_name} />
+                            <AvatarFallback>{initials}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between mb-1">
+                              <h3 className="font-semibold text-foreground">{startup.founder_name}</h3>
+                              <div className="flex items-center gap-2">
+                                <Star 
+                                  className={`h-4 w-4 cursor-pointer transition-all ${favoriteStartups.includes(startup.startup_name) ? 'fill-yellow-500 text-yellow-500' : 'text-foreground-muted hover:text-yellow-500'}`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleFavorite(startup.startup_name);
+                                  }}
+                                />
+                              </div>
+                            </div>
+                            <p className="text-sm font-medium text-primary mb-1">{startup.startup_name}</p>
+                            <div className="space-y-1 text-xs">
+                              <p className="text-foreground-secondary"><span className="font-medium">Location:</span> {startup.location}</p>
+                              <p className="text-foreground-secondary"><span className="font-medium">Industry:</span> {startup.industry}</p>
+                              <p className="text-foreground-secondary"><span className="font-medium">Description:</span> {startup.description}</p>
                             </div>
                           </div>
-                          <p className="text-sm font-medium text-primary mb-1">{startup.startupName}</p>
-                          <div className="space-y-1 text-xs">
-                            <p className="text-foreground-secondary"><span className="font-medium">Location:</span> {startup.location}</p>
-                            <p className="text-foreground-secondary"><span className="font-medium">Industry:</span> {startup.industry}</p>
-                            <p className="text-foreground-secondary"><span className="font-medium">Description:</span> {startup.description}</p>
-                          </div>
                         </div>
-                      </div>
-                    </Card>
-                  ))
+                      </Card>
+                    );
+                  })
                 )}
               </div>
             </div>}
@@ -1113,6 +1108,7 @@ function MobileApp() {
         <AddStartupDialog
           open={showAddStartupDialog}
           onOpenChange={setShowAddStartupDialog}
+          onStartupAdded={loadStartups}
         />
       </div>
     </div>;

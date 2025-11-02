@@ -6,13 +6,15 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Upload, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AddStartupDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onStartupAdded?: () => void;
 }
 
-export function AddStartupDialog({ open, onOpenChange }: AddStartupDialogProps) {
+export function AddStartupDialog({ open, onOpenChange, onStartupAdded }: AddStartupDialogProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -59,9 +61,46 @@ export function AddStartupDialog({ open, onOpenChange }: AddStartupDialogProps) 
     setIsLoading(true);
     
     try {
-      // TODO: Implement actual save logic here
-      // For now, just simulate a save
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
+      let imageUrl = '';
+
+      // Upload image if selected
+      if (selectedImage) {
+        const fileExt = selectedImage.name.split('.').pop();
+        const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('profile-images')
+          .upload(fileName, selectedImage);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('profile-images')
+          .getPublicUrl(fileName);
+
+        imageUrl = publicUrl;
+      }
+
+      // Insert startup data
+      const { error: insertError } = await supabase
+        .from('startups')
+        .insert({
+          user_id: user.id,
+          founder_name: formData.founder,
+          startup_name: formData.startup,
+          location: formData.location,
+          industry: formData.industry,
+          description: formData.description,
+          image_url: imageUrl
+        });
+
+      if (insertError) throw insertError;
       
       toast({
         title: 'Success',
@@ -79,7 +118,13 @@ export function AddStartupDialog({ open, onOpenChange }: AddStartupDialogProps) 
       setSelectedImage(null);
       setImagePreview('');
       onOpenChange(false);
+      
+      // Notify parent to refresh
+      if (onStartupAdded) {
+        onStartupAdded();
+      }
     } catch (error) {
+      console.error('Error saving startup:', error);
       toast({
         title: 'Error',
         description: 'Failed to add startup',
