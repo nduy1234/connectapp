@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { supabase } from '@/integrations/supabase/client';
 import sarahChenAvatar from '@/assets/sarah-chen-avatar.jpg';
 import michaelRodriguezAvatar from '@/assets/michael-rodriguez-avatar.jpg';
 import emilyWatsonAvatar from '@/assets/emily-watson-avatar.jpg';
@@ -26,34 +27,48 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
   partnerName,
   onBack,
 }) => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      text: 'Hey! Thanks for connecting',
-      sentByMe: false,
-      timestamp: '10:30 AM',
-    },
-    {
-      id: 2,
-      text: "Hi! I'm excited to learn more about your startup",
-      sentByMe: true,
-      timestamp: '10:32 AM',
-    },
-    {
-      id: 3,
-      text: 'Would love to set up a call sometime this week',
-      sentByMe: false,
-      timestamp: '10:35 AM',
-    },
-    {
-      id: 4,
-      text: "That sounds great! I'm free on Thursday afternoon",
-      sentByMe: true,
-      timestamp: '10:37 AM',
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Load messages from database
+  useEffect(() => {
+    loadMessages();
+  }, [partnerId]);
+
+  const loadMessages = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('partner_id', partnerId)
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+
+      if (data) {
+        const formattedMessages = data.map((msg) => ({
+          id: parseInt(msg.id.split('-')[0], 16),
+          text: msg.text,
+          sentByMe: msg.sent_by_me,
+          timestamp: new Date(msg.created_at).toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+          }),
+        }));
+        setMessages(formattedMessages);
+      }
+    } catch (error) {
+      console.error('Error loading messages:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -63,20 +78,42 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newMessage.trim()) {
-      const message: Message = {
-        id: messages.length + 1,
-        text: newMessage,
-        sentByMe: true,
-        timestamp: new Date().toLocaleTimeString('en-US', {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const timestamp = new Date().toLocaleTimeString('en-US', {
           hour: 'numeric',
           minute: '2-digit',
-        }),
-      };
-      setMessages([...messages, message]);
-      setNewMessage('');
+        });
+
+        // Save to database
+        const { error } = await supabase
+          .from('messages')
+          .insert({
+            user_id: user.id,
+            partner_id: partnerId,
+            text: newMessage,
+            sent_by_me: true,
+          });
+
+        if (error) throw error;
+
+        // Update local state
+        const message: Message = {
+          id: messages.length + 1,
+          text: newMessage,
+          sentByMe: true,
+          timestamp,
+        };
+        setMessages([...messages, message]);
+        setNewMessage('');
+      } catch (error) {
+        console.error('Error sending message:', error);
+      }
     }
   };
 
@@ -124,7 +161,16 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
-        {messages.map((message) => (
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-foreground-muted">Loading messages...</p>
+          </div>
+        ) : messages.length === 0 ? (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-foreground-muted">No messages yet. Start the conversation!</p>
+          </div>
+        ) : (
+          messages.map((message) => (
           <div
             key={message.id}
             className={`flex ${message.sentByMe ? 'justify-end' : 'justify-start'}`}
@@ -146,7 +192,8 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
               </p>
             </div>
           </div>
-        ))}
+          ))
+        )}
         <div ref={messagesEndRef} />
       </div>
 
