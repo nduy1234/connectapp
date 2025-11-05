@@ -869,11 +869,22 @@ function MobileApp() {
                       .join('')
                       .toUpperCase();
                     
+                    // Map founder names to avatars
+                    const getAvatarForFounder = (name: string) => {
+                      const lowerName = name.toLowerCase();
+                      if (lowerName.includes('sarah chen')) return sarahChenAvatar;
+                      if (lowerName.includes('michael rodriguez')) return michaelRodriguezAvatar;
+                      if (lowerName.includes('emily watson')) return emilyWatsonAvatar;
+                      if (lowerName.includes('david kim')) return davidKimAvatar;
+                      if (lowerName.includes('jessica lee')) return jessicaLeeAvatar;
+                      return startup.image_url;
+                    };
+                    
                     return (
                       <Card key={startup.id} className="glass-effect p-4 cursor-pointer hover:shadow-lg transition-all duration-200 card-hover">
                         <div className="flex items-start space-x-4">
                           <Avatar className="h-14 w-14">
-                            <AvatarImage src={startup.image_url} alt={startup.founder_name} />
+                            <AvatarImage src={getAvatarForFounder(startup.founder_name)} alt={startup.founder_name} />
                             <AvatarFallback>{initials}</AvatarFallback>
                           </Avatar>
                           <div className="flex-1 min-w-0">
