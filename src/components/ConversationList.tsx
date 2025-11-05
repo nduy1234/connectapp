@@ -52,7 +52,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
     {
       id: 4,
       name: 'David Kim',
-      startupName: 'HealthHub AI',
+      startupName: 'FinFlow',
       lastMessage: 'Would love to discuss potential partnership',
       time: '3h ago',
       avatar: 'DK',
