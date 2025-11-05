@@ -36,7 +36,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
     {
       id: 2,
       name: 'Michael Rodriguez',
-      startupName: 'HealthFirst',
+      startupName: 'HealthHub AI',
       lastMessage: "Thanks for the intro, let's connect",
       time: '15m ago',
       avatar: 'MR',
