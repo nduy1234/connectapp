@@ -28,7 +28,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
     {
       id: 1,
       name: 'Sarah Chen',
-      startupName: 'TechFlow AI',
+      startupName: 'EcoTech Solutions',
       lastMessage: 'Looking forward to our collaboration!',
       time: '2m ago',
       avatar: 'SC',
@@ -36,7 +36,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
     {
       id: 2,
       name: 'Michael Rodriguez',
-      startupName: 'FinWave',
+      startupName: 'HealthFirst',
       lastMessage: "Thanks for the intro, let's connect",
       time: '15m ago',
       avatar: 'MR',
@@ -44,7 +44,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
     {
       id: 3,
       name: 'Emily Watson',
-      startupName: 'GreenTech Solutions',
+      startupName: 'EduLearn',
       lastMessage: 'I love your approach to sustainability',
       time: '1h ago',
       avatar: 'EW',
@@ -52,7 +52,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
     {
       id: 4,
       name: 'David Kim',
-      startupName: 'HealthHub',
+      startupName: 'FoodConnect',
       lastMessage: 'Would love to discuss potential partnership',
       time: '3h ago',
       avatar: 'DK',
@@ -60,7 +60,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
     {
       id: 5,
       name: 'Jessica Lee',
-      startupName: 'EduConnect',
+      startupName: 'StyleHub',
       lastMessage: 'Great meeting you at the conference!',
       time: '1d ago',
       avatar: 'JL',
