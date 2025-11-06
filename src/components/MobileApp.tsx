@@ -764,9 +764,17 @@ function MobileApp() {
 
           {activeTab === 'resource' && <div className="p-6">
               <div className="glass-effect rounded-2xl p-8 shadow-xl text-center">
-                <h2 className="text-2xl font-bold text-success mb-4">
+                <h2 className="text-2xl font-bold text-success mb-6">
                   Resources
                 </h2>
+                <div className="relative max-w-md mx-auto">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground-muted w-5 h-5" />
+                  <Input
+                    type="text"
+                    placeholder="Search resources..."
+                    className="pl-10"
+                  />
+                </div>
               </div>
             </div>}
 
