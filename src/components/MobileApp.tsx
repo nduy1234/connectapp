@@ -764,9 +764,6 @@ function MobileApp() {
 
           {activeTab === 'resource' && <div className="p-6">
               <div className="glass-effect rounded-2xl p-8 shadow-xl text-center">
-                <div className="w-16 h-16 bg-gradient-success rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-success">
-                  <BookOpen className="w-8 h-8 text-white" />
-                </div>
                 <h2 className="text-2xl font-bold text-success mb-4">
                   Resources
                 </h2>
