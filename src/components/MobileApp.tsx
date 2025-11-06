@@ -6,6 +6,7 @@ import { ConversationList } from './ConversationList';
 import { ChatDetail } from './ChatDetail';
 import { ComposeMessageDialog } from './ComposeMessageDialog';
 import { AddStartupDialog } from './AddStartupDialog';
+import { AddResourceDialog } from './AddResourceDialog';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
@@ -72,6 +73,7 @@ function MobileApp() {
   const [selectedChatUserName, setSelectedChatUserName] = useState<string>('');
   const [showNewMessageDialog, setShowNewMessageDialog] = useState(false);
   const [showAddStartupDialog, setShowAddStartupDialog] = useState(false);
+  const [showAddResourceDialog, setShowAddResourceDialog] = useState(false);
   const [favoriteStartups, setFavoriteStartups] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [startups, setStartups] = useState<any[]>([]);
@@ -768,7 +770,10 @@ function MobileApp() {
                   Resources
                 </h2>
                 <div className="flex justify-end mb-4">
-                  <Button className="bg-gradient-primary hover:opacity-90 transition-opacity">
+                  <Button 
+                    className="bg-gradient-primary hover:opacity-90 transition-opacity"
+                    onClick={() => setShowAddResourceDialog(true)}
+                  >
                     <Plus className="w-4 h-4 mr-2" />
                     Add Resource
                   </Button>
@@ -1130,6 +1135,12 @@ function MobileApp() {
           open={showAddStartupDialog}
           onOpenChange={setShowAddStartupDialog}
           onStartupAdded={loadStartups}
+        />
+
+        {/* Add Resource Dialog */}
+        <AddResourceDialog
+          open={showAddResourceDialog}
+          onOpenChange={setShowAddResourceDialog}
         />
       </div>
     </div>;
