@@ -53,7 +53,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
       id: 4,
       name: 'David Kim',
       startupName: 'FinFlow',
-      lastMessage: 'Would love to discuss potential partnership',
+      lastMessage: 'Nice to learn about your startup',
       time: '3h ago',
       avatar: 'DK',
     },
