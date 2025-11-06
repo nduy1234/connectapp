@@ -767,7 +767,6 @@ function MobileApp() {
                 <h2 className="text-2xl font-bold text-success mb-4">
                   Resources
                 </h2>
-                <p className="text-foreground-secondary">Explore our learning materials and guides</p>
               </div>
             </div>}
 
