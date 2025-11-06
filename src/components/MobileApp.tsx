@@ -763,10 +763,16 @@ function MobileApp() {
             </div>}
 
           {activeTab === 'resource' && <div className="p-6">
-              <div className="glass-effect rounded-2xl p-8 shadow-xl text-center">
-                <h2 className="text-2xl font-bold text-success mb-6">
+              <div className="glass-effect rounded-2xl p-8 shadow-xl">
+                <h2 className="text-2xl font-bold text-success mb-6 text-center">
                   Resources
                 </h2>
+                <div className="flex justify-end mb-4">
+                  <Button className="bg-gradient-primary hover:opacity-90 transition-opacity">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Resource
+                  </Button>
+                </div>
                 <div className="relative max-w-md mx-auto">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground-muted w-5 h-5" />
                   <Input
