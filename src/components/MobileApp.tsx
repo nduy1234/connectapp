@@ -603,7 +603,7 @@ function MobileApp() {
                   </div>
                   <div onClick={() => setShowNotificationSettings(true)} className="flex items-center justify-between p-4 glass-effect rounded-xl hover:bg-accent transition-all duration-200 cursor-pointer card-hover">
                     <div className="flex items-center space-x-4">
-                      <div className="w-10 h-10 bg-gradient-warning rounded-xl flex items-center justify-center shadow-warning">
+                      <div className="w-10 h-10 bg-gray-700 rounded-xl flex items-center justify-center shadow-warning">
                         <Bell className="w-5 h-5 text-white" />
                       </div>
                       <span className="font-semibold text-foreground">Notification Preferences</span>
