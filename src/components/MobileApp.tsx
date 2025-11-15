@@ -78,6 +78,13 @@ function MobileApp() {
   const [searchQuery, setSearchQuery] = useState('');
   const [startups, setStartups] = useState<any[]>([]);
   const [isLoadingStartups, setIsLoadingStartups] = useState(false);
+  const [resources, setResources] = useState<Array<{
+    id: string;
+    title: string;
+    category: string;
+    description: string;
+    contact: string;
+  }>>([]);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
 
@@ -778,7 +785,7 @@ function MobileApp() {
                     Add Resource
                   </Button>
                 </div>
-                <div className="relative max-w-md mx-auto">
+                <div className="relative max-w-md mx-auto mb-6">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground-muted w-5 h-5" />
                   <Input
                     type="text"
@@ -786,6 +793,29 @@ function MobileApp() {
                     className="pl-10"
                   />
                 </div>
+                {resources.length === 0 ? (
+                  <div className="text-center py-12">
+                    <p className="text-muted-foreground">No resources yet. Add your first resource!</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4 mt-6">
+                    {resources.map((resource) => (
+                      <Card key={resource.id} className="p-4 hover:shadow-lg transition-shadow">
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="text-lg font-semibold text-foreground">{resource.title}</h3>
+                          <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
+                            {resource.category}
+                          </span>
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-3">{resource.description}</p>
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <Mail className="w-4 h-4 mr-2" />
+                          {resource.contact}
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>}
 
@@ -1141,6 +1171,16 @@ function MobileApp() {
         <AddResourceDialog
           open={showAddResourceDialog}
           onOpenChange={setShowAddResourceDialog}
+          onAddResource={(resource) => {
+            setResources((prev) => [
+              ...prev,
+              { id: Date.now().toString(), ...resource }
+            ]);
+            toast({
+              title: "Success",
+              description: "Resource added successfully!",
+            });
+          }}
         />
       </div>
     </div>;
