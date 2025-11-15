@@ -14,11 +14,13 @@ import { Loader2 } from 'lucide-react';
 interface AddResourceDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onAddResource: (resource: { title: string; category: string; description: string; contact: string }) => void;
 }
 
 export const AddResourceDialog: React.FC<AddResourceDialogProps> = ({
   open,
   onOpenChange,
+  onAddResource,
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -32,12 +34,13 @@ export const AddResourceDialog: React.FC<AddResourceDialogProps> = ({
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate submission
+    onAddResource(formData);
+    
     setTimeout(() => {
       setIsSubmitting(false);
       onOpenChange(false);
       setFormData({ title: '', category: '', description: '', contact: '' });
-    }, 1000);
+    }, 500);
   };
 
   return (
