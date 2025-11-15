@@ -808,7 +808,7 @@ function MobileApp() {
                     <Button
                       onClick={() => setShowNewMessageDialog(true)}
                       size="sm"
-                      className="gap-2"
+                      className="gap-2 bg-gray-700 hover:bg-gray-600"
                     >
                       <Plus className="w-4 h-4" />
                       New Message
