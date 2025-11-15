@@ -782,7 +782,7 @@ function MobileApp() {
                     onClick={() => setShowAddResourceDialog(true)}
                   >
                     <Plus className="w-4 h-4 mr-2" />
-                    Add Resource
+                    Share Resource
                   </Button>
                 </div>
                 <div className="relative max-w-md mx-auto mb-6">
