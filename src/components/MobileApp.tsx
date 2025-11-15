@@ -78,6 +78,7 @@ function MobileApp() {
   const [searchQuery, setSearchQuery] = useState('');
   const [startups, setStartups] = useState<any[]>([]);
   const [isLoadingStartups, setIsLoadingStartups] = useState(false);
+  const [isLoadingResources, setIsLoadingResources] = useState(false);
   const [resources, setResources] = useState<Array<{
     id: string;
     title: string;
@@ -148,10 +149,40 @@ function MobileApp() {
     }
   };
 
+  // Load resources from database
+  const loadResources = async () => {
+    setIsLoadingResources(true);
+    try {
+      const { data, error } = await supabase
+        .from('resources')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      setResources(data || []);
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Error loading resources',
+        description: error.message
+      });
+    } finally {
+      setIsLoadingResources(false);
+    }
+  };
+
   // Load startups when authenticated and on main screen
   useEffect(() => {
     if (authUser && currentScreen === 'main') {
       loadStartups();
+    }
+  }, [authUser, currentScreen]);
+
+  // Load resources when authenticated and on main screen
+  useEffect(() => {
+    if (authUser && currentScreen === 'main') {
+      loadResources();
     }
   }, [authUser, currentScreen]);
 
@@ -793,7 +824,12 @@ function MobileApp() {
                     className="pl-10"
                   />
                 </div>
-                {resources.length === 0 ? (
+                {isLoadingResources ? (
+                  <div className="text-center py-12">
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+                    <p className="text-muted-foreground mt-4">Loading resources...</p>
+                  </div>
+                ) : resources.length === 0 ? (
                   <div className="text-center py-12">
                     <p className="text-muted-foreground">No resources yet. Add your first resource!</p>
                   </div>
@@ -1171,15 +1207,38 @@ function MobileApp() {
         <AddResourceDialog
           open={showAddResourceDialog}
           onOpenChange={setShowAddResourceDialog}
-          onAddResource={(resource) => {
-            setResources((prev) => [
-              ...prev,
-              { id: Date.now().toString(), ...resource }
-            ]);
-            toast({
-              title: "Success",
-              description: "Resource added successfully!",
-            });
+          onAddResource={async (resource) => {
+            if (!authUser) return;
+
+            try {
+              const { data, error } = await supabase
+                .from('resources')
+                .insert([
+                  {
+                    user_id: authUser.id,
+                    title: resource.title,
+                    category: resource.category,
+                    description: resource.description,
+                    contact: resource.contact,
+                  },
+                ])
+                .select()
+                .single();
+
+              if (error) throw error;
+
+              setResources((prev) => [data, ...prev]);
+              toast({
+                title: "Success",
+                description: "Resource shared successfully!",
+              });
+            } catch (error: any) {
+              toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: error.message || 'Failed to share resource',
+              });
+            }
           }}
         />
       </div>
