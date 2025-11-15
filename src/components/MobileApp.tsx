@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Home, User, BookOpen, MessageCircle, Briefcase, Bell, Settings, Eye, EyeOff, Mail, Lock, ArrowLeft, Check, Loader2, Users, Calendar, Activity, Rocket, Camera, Video, Upload, Search, Plus, LogOut, Star } from 'lucide-react';
+import { Home, User, BookOpen, MessageCircle, Briefcase, Bell, Settings, Eye, EyeOff, Mail, Lock, ArrowLeft, Check, Loader2, Users, Calendar, Activity, Rocket, Camera, Video, Upload, Search, Plus, LogOut, Star, MessageSquare, CheckCircle2, UserPlus } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ConversationList } from './ConversationList';
@@ -592,28 +592,47 @@ function MobileApp() {
               <div className="glass-effect rounded-2xl p-6 shadow-xl">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-foreground">Recent Notifications</h2>
-                  
+                  <button className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    Mark all read
+                  </button>
                 </div>
-                <div className="space-y-4">
-                  <div className="flex items-start space-x-4 p-4 bg-info/10 rounded-xl border-l-4 border-info">
-                    <div className="w-2 h-2 bg-info rounded-full mt-2 shadow-lg shadow-info/50"></div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-foreground">New message received</p>
-                      <p className="text-foreground-secondary text-sm">You have a new message from Sarah</p>
+                <div className="space-y-3">
+                  <div className="group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-info/5 to-transparent hover:from-info/10 transition-all duration-300 cursor-pointer border border-transparent hover:border-info/20">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-info/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <MessageSquare className="w-5 h-5 text-info" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <p className="font-semibold text-foreground">New message received</p>
+                        <span className="text-xs text-muted-foreground whitespace-nowrap">2m ago</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground line-clamp-2">You have a new message from Sarah</p>
                     </div>
                   </div>
-                  <div className="flex items-start space-x-4 p-4 bg-success/10 rounded-xl border-l-4 border-success">
-                    <div className="w-2 h-2 bg-success rounded-full mt-2 shadow-lg shadow-success/50"></div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-foreground">Profile updated</p>
-                      <p className="text-foreground-secondary text-sm">Your profile has been successfully updated</p>
+                  
+                  <div className="group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-success/5 to-transparent hover:from-success/10 transition-all duration-300 cursor-pointer border border-transparent hover:border-success/20">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-success/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <CheckCircle2 className="w-5 h-5 text-success" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <p className="font-semibold text-foreground">Profile updated</p>
+                        <span className="text-xs text-muted-foreground whitespace-nowrap">1h ago</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground line-clamp-2">Your profile has been successfully updated</p>
                     </div>
                   </div>
-                  <div className="flex items-start space-x-4 p-4 bg-secondary/10 rounded-xl border-l-4 border-secondary">
-                    <div className="w-2 h-2 bg-secondary rounded-full mt-2 shadow-lg shadow-secondary/50"></div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-foreground">New Connection</p>
-                      <p className="text-foreground-secondary text-sm">John connected with you</p>
+                  
+                  <div className="group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-secondary/5 to-transparent hover:from-secondary/10 transition-all duration-300 cursor-pointer border border-transparent hover:border-secondary/20">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <UserPlus className="w-5 h-5 text-secondary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <p className="font-semibold text-foreground">New Connection</p>
+                        <span className="text-xs text-muted-foreground whitespace-nowrap">3h ago</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground line-clamp-2">John connected with you</p>
                     </div>
                   </div>
                 </div>
