@@ -552,7 +552,6 @@ function MobileApp() {
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold text-foreground text-lg">Explore resources</h3>
-                    <p className="text-foreground-secondary text-sm">Discover learning materials and helpful guides</p>
                   </div>
                   <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${selectedOptions.includes('explore') ? 'border-warning bg-warning' : 'border-border'}`}>
                     {selectedOptions.includes('explore') && <Check className="w-4 h-4 text-white" />}
