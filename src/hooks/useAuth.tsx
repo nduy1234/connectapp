@@ -133,6 +133,29 @@ export const useAuth = () => {
       return { data: null, error };
     }
   };
+
+  const signInAnonymously = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInAnonymously();
+
+      if (error) throw error;
+
+      toast({
+        title: 'Welcome!',
+        description: 'You are now signed in anonymously.',
+      });
+
+      return { data, error: null };
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive',
+      });
+      return { data: null, error };
+    }
+  };
+
   const signOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
@@ -259,6 +282,7 @@ export const useAuth = () => {
     signIn,
     signInWithGoogle,
     signInWithApple,
+    signInAnonymously,
     signOut,
     resetPassword,
     saveProfile,
