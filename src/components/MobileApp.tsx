@@ -702,21 +702,21 @@ function MobileApp() {
               </div>
 
               {/* Upload Options */}
-              <div className="glass-effect rounded-2xl p-6 shadow-xl">
-                <h3 className="text-xl font-bold text-foreground mb-6">Upload Content</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="glass-effect rounded-2xl p-4 shadow-xl">
+                <h3 className="text-lg font-bold text-foreground mb-4">Upload Content</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {/* Profile Image Upload */}
-                  <div className="p-6 border-2 border-dashed border-border rounded-xl hover:border-info hover:bg-info/5 transition-all duration-200 cursor-pointer group" onClick={() => imageInputRef.current?.click()}>
+                  <div className="p-4 border-2 border-dashed border-border rounded-xl hover:border-info hover:bg-info/5 transition-all duration-200 cursor-pointer group" onClick={() => imageInputRef.current?.click()}>
                     <div className="text-center">
-                      <div className="w-16 h-16 bg-gradient-info rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-info group-hover:scale-110 transition-transform duration-200">
-                        <Camera className="w-8 h-8 text-white" />
+                      <div className="w-12 h-12 bg-gradient-info rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-info group-hover:scale-110 transition-transform duration-200">
+                        <Camera className="w-6 h-6 text-white" />
                       </div>
-                      <h4 className="text-lg font-semibold text-foreground mb-2">Profile Image</h4>
-                      <p className="text-foreground-secondary text-sm mb-4">
+                      <h4 className="text-base font-semibold text-foreground mb-1">Profile Image</h4>
+                      <p className="text-foreground-secondary text-xs mb-3">
                         {selectedImage ? `Selected: ${selectedImage.name}` : "Upload a profile picture to personalize your account"}
                       </p>
-                      <div className="flex items-center justify-center space-x-2 text-info font-medium">
-                        <Upload className="w-4 h-4" />
+                      <div className="flex items-center justify-center space-x-2 text-info font-medium text-sm">
+                        <Upload className="w-3 h-3" />
                         <span>{selectedImage ? 'Change Image' : 'Choose Image'}</span>
                       </div>
                     </div>
@@ -730,17 +730,17 @@ function MobileApp() {
                   </div>
 
                   {/* Short Video Upload */}
-                  <div className="p-6 border-2 border-dashed border-border rounded-xl hover:border-secondary hover:bg-secondary/5 transition-all duration-200 cursor-pointer group" onClick={() => videoInputRef.current?.click()}>
+                  <div className="p-4 border-2 border-dashed border-border rounded-xl hover:border-secondary hover:bg-secondary/5 transition-all duration-200 cursor-pointer group" onClick={() => videoInputRef.current?.click()}>
                     <div className="text-center">
-                      <div className="w-16 h-16 bg-gradient-to-r from-secondary to-secondary-dark rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-secondary/30 group-hover:scale-110 transition-transform duration-200">
-                        <Video className="w-8 h-8 text-white" />
+                      <div className="w-12 h-12 bg-gradient-to-r from-secondary to-secondary-dark rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-secondary/30 group-hover:scale-110 transition-transform duration-200">
+                        <Video className="w-6 h-6 text-white" />
                       </div>
-                      <h4 className="text-lg font-semibold text-foreground mb-2">Short Video</h4>
-                      <p className="text-foreground-secondary text-sm mb-4">
+                      <h4 className="text-base font-semibold text-foreground mb-1">Short Video</h4>
+                      <p className="text-foreground-secondary text-xs mb-3">
                         {selectedVideo ? `Selected: ${selectedVideo.name}` : "Share a short video introduction about yourself"}
                       </p>
-                      <div className="flex items-center justify-center space-x-2 text-secondary font-medium">
-                        <Upload className="w-4 h-4" />
+                      <div className="flex items-center justify-center space-x-2 text-secondary font-medium text-sm">
+                        <Upload className="w-3 h-3" />
                         <span>{selectedVideo ? 'Change Video' : 'Choose Video'}</span>
                       </div>
                     </div>
