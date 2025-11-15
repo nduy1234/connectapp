@@ -524,7 +524,6 @@ function MobileApp() {
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold text-foreground text-lg">Network with others</h3>
-                    <p className="text-foreground-secondary text-sm">Connect and build relationships with professionals</p>
                   </div>
                   <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${selectedOptions.includes('network') ? 'border-primary bg-primary' : 'border-border'}`}>
                     {selectedOptions.includes('network') && <Check className="w-4 h-4 text-white" />}
