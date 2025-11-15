@@ -23,6 +23,7 @@ export const AddResourceDialog: React.FC<AddResourceDialogProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
+    category: '',
     description: '',
     contact: '',
   });
@@ -35,7 +36,7 @@ export const AddResourceDialog: React.FC<AddResourceDialogProps> = ({
     setTimeout(() => {
       setIsSubmitting(false);
       onOpenChange(false);
-      setFormData({ title: '', description: '', contact: '' });
+      setFormData({ title: '', category: '', description: '', contact: '' });
     }, 1000);
   };
 
@@ -56,6 +57,19 @@ export const AddResourceDialog: React.FC<AddResourceDialogProps> = ({
               value={formData.title}
               onChange={(e) =>
                 setFormData({ ...formData, title: e.target.value })
+              }
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="category">Category</Label>
+            <Input
+              id="category"
+              placeholder="Enter resource category"
+              value={formData.category}
+              onChange={(e) =>
+                setFormData({ ...formData, category: e.target.value })
               }
               required
             />
