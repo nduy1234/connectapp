@@ -127,14 +127,12 @@ export const useAuth = () => {
       return { data, error: null };
     } catch (error: any) {
       toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
+        title: 'Apple sign-in unavailable',
+        description: 'Apple login isn’t configured yet. Please use email or Google for now.',
       });
       return { data: null, error };
     }
   };
-
   const signOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
