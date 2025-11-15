@@ -538,7 +538,6 @@ function MobileApp() {
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold text-foreground text-lg">Collaborate with others</h3>
-                    <p className="text-foreground-secondary text-sm">Work together on projects and share ideas</p>
                   </div>
                   <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${selectedOptions.includes('collaborate') ? 'border-success bg-success' : 'border-border'}`}>
                     {selectedOptions.includes('collaborate') && <Check className="w-4 h-4 text-white" />}
