@@ -592,9 +592,6 @@ function MobileApp() {
               <div className="glass-effect rounded-2xl p-6 shadow-xl">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-foreground">Recent Notifications</h2>
-                  <button className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                    Mark all read
-                  </button>
                 </div>
                 <div className="space-y-3">
                   <div className="group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-info/5 to-transparent hover:from-info/10 transition-all duration-300 cursor-pointer border border-transparent hover:border-info/20">
