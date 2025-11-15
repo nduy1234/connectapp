@@ -335,7 +335,7 @@ function MobileApp() {
                     {isSignUp ? "Let's connect!" : 'Welcome Back'}
                   </h1>
                   <p className="text-foreground-secondary">
-                    {isSignUp ? 'Join our community today' : 'Sign in to your account'}
+                    {isSignUp ? 'Join our startup community today' : 'Sign in to your account'}
                   </p>
                 </div>
 
