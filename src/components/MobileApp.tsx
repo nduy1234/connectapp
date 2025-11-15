@@ -846,7 +846,7 @@ function MobileApp() {
                   <h2 className="text-2xl font-bold text-foreground">Startups</h2>
                   <p className="text-sm text-foreground-secondary">Discover innovative startups</p>
                 </div>
-                <Button size="sm" className="gap-2" onClick={() => setShowAddStartupDialog(true)}>
+                <Button size="sm" className="gap-2 bg-gray-700 hover:bg-gray-600" onClick={() => setShowAddStartupDialog(true)}>
                   <Plus className="w-4 h-4" />
                   Add Startup
                 </Button>
