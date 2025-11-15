@@ -771,7 +771,7 @@ function MobileApp() {
                 </h2>
                 <div className="flex justify-end mb-4">
                   <Button 
-                    className="bg-gradient-primary hover:opacity-90 transition-opacity"
+                    className="bg-gray-700 hover:bg-gray-600 transition-colors"
                     onClick={() => setShowAddResourceDialog(true)}
                   >
                     <Plus className="w-4 h-4 mr-2" />
