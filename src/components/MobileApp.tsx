@@ -894,7 +894,7 @@ function MobileApp() {
                 <div className="glass-effect rounded-2xl p-6 shadow-xl">
                   {/* Header with New Message Button */}
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold text-foreground">Messages</h2>
+                    <h2 className="text-xl font-bold text-secondary">Messages</h2>
                     <Button
                       onClick={() => setShowNewMessageDialog(true)}
                       size="sm"
