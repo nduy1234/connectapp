@@ -933,7 +933,7 @@ function MobileApp() {
           {activeTab === 'startups' && <div className="p-6 space-y-4">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-foreground">Startups</h2>
+                  <h2 className="text-2xl font-bold text-success">Startups</h2>
                   <p className="text-sm text-foreground-secondary">Discover innovative startups</p>
                 </div>
                 <Button size="sm" className="gap-2 bg-gray-700 hover:bg-gray-600" onClick={() => setShowAddStartupDialog(true)}>
