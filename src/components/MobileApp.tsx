@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Home, User, BookOpen, MessageCircle, Briefcase, Bell, Settings, Eye, EyeOff, Mail, Lock, ArrowLeft, Check, Loader2, Users, Calendar, Activity, Rocket, Camera, Video, Upload, Search, Plus, LogOut, Star, MessageSquare, CheckCircle2, UserPlus } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ConversationList } from './ConversationList';
 import { ChatDetail } from './ChatDetail';
 import { ComposeMessageDialog } from './ComposeMessageDialog';
@@ -76,6 +77,8 @@ function MobileApp() {
   const [showAddResourceDialog, setShowAddResourceDialog] = useState(false);
   const [favoriteStartups, setFavoriteStartups] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [resourceSearchQuery, setResourceSearchQuery] = useState('');
+  const [resourceCategoryFilter, setResourceCategoryFilter] = useState('All');
   const [startups, setStartups] = useState<any[]>([]);
   const [isLoadingStartups, setIsLoadingStartups] = useState(false);
   const [isLoadingResources, setIsLoadingResources] = useState(false);
@@ -195,6 +198,18 @@ function MobileApp() {
     startup.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
     startup.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Filter resources based on search query and category
+  const filteredResources = resources.filter(resource => {
+    const matchesSearch = resourceSearchQuery === '' || 
+      resource.title.toLowerCase().includes(resourceSearchQuery.toLowerCase()) ||
+      resource.description.toLowerCase().includes(resourceSearchQuery.toLowerCase());
+    
+    const matchesCategory = resourceCategoryFilter === 'All' || 
+      resource.category === resourceCategoryFilter;
+    
+    return matchesSearch && matchesCategory;
+  });
 
   // Sample conversation data
   const conversations = [
@@ -828,26 +843,47 @@ function MobileApp() {
                     Share Resource
                   </Button>
                 </div>
-                <div className="relative max-w-md mx-auto mb-6">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground-muted w-5 h-5" />
-                  <Input
-                    type="text"
-                    placeholder="Search resources..."
-                    className="pl-10"
-                  />
+                <div className="flex gap-4 mb-6">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground-muted w-5 h-5" />
+                    <Input
+                      type="text"
+                      placeholder="Search by title..."
+                      className="pl-10"
+                      value={resourceSearchQuery}
+                      onChange={(e) => setResourceSearchQuery(e.target.value)}
+                    />
+                  </div>
+                  <Select value={resourceCategoryFilter} onValueChange={setResourceCategoryFilter}>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="All">All Categories</SelectItem>
+                      <SelectItem value="Finance">Finance</SelectItem>
+                      <SelectItem value="Marketing">Marketing</SelectItem>
+                      <SelectItem value="Engineering">Engineering</SelectItem>
+                      <SelectItem value="Legal">Legal</SelectItem>
+                      <SelectItem value="Promotion">Promotion</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 {isLoadingResources ? (
                   <div className="text-center py-12">
                     <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
                     <p className="text-muted-foreground mt-4">Loading resources...</p>
                   </div>
-                ) : resources.length === 0 ? (
+                ) : filteredResources.length === 0 ? (
                   <div className="text-center py-12">
-                    <p className="text-muted-foreground">No resources yet. Add your first resource!</p>
+                    <p className="text-muted-foreground">
+                      {resourceSearchQuery || resourceCategoryFilter !== 'All' 
+                        ? 'No resources found matching your filters.' 
+                        : 'No resources yet. Add your first resource!'}
+                    </p>
                   </div>
                 ) : (
                   <div className="space-y-4 mt-6">
-                    {resources.map((resource) => (
+                    {filteredResources.map((resource) => (
                       <Card key={resource.id} className="p-4 hover:shadow-lg transition-shadow">
                         <div className="flex justify-between items-start mb-2">
                           <h3 className="text-lg font-semibold text-foreground">{resource.title}</h3>
