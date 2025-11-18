@@ -76,6 +76,7 @@ function MobileApp() {
   const [showAddResourceDialog, setShowAddResourceDialog] = useState(false);
   const [favoriteStartups, setFavoriteStartups] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [resourceSearchQuery, setResourceSearchQuery] = useState('');
   const [startups, setStartups] = useState<any[]>([]);
   const [isLoadingStartups, setIsLoadingStartups] = useState(false);
   const [isLoadingResources, setIsLoadingResources] = useState(false);
@@ -834,6 +835,8 @@ function MobileApp() {
                     type="text"
                     placeholder="Search resources..."
                     className="pl-10"
+                    value={resourceSearchQuery}
+                    onChange={(e) => setResourceSearchQuery(e.target.value)}
                   />
                 </div>
                 {isLoadingResources ? (
@@ -847,7 +850,16 @@ function MobileApp() {
                   </div>
                 ) : (
                   <div className="space-y-4 mt-6">
-                    {resources.map((resource) => (
+                    {resources
+                      .filter((resource) => {
+                        const query = resourceSearchQuery.toLowerCase();
+                        return (
+                          resource.title.toLowerCase().includes(query) ||
+                          resource.category.toLowerCase().includes(query) ||
+                          resource.description?.toLowerCase().includes(query)
+                        );
+                      })
+                      .map((resource) => (
                       <Card key={resource.id} className="p-4 hover:shadow-lg transition-shadow">
                         <div className="flex justify-between items-start mb-2">
                           <h3 className="text-lg font-semibold text-foreground">{resource.title}</h3>
