@@ -825,7 +825,6 @@ function MobileApp() {
                     className="bg-gray-700 hover:bg-gray-600 transition-colors"
                     onClick={() => setShowAddResourceDialog(true)}
                   >
-                    <Plus className="w-4 h-4 mr-2" />
                     Share Resource
                   </Button>
                 </div>
