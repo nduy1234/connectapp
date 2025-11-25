@@ -417,7 +417,7 @@ function MobileApp() {
                       <div className="space-y-3">
                         <button type="button" onClick={async () => {
                           setIsLoading(true);
-                          await signInAnonymously();
+                          await signInWithGoogle();
                           setIsLoading(false);
                         }} disabled={isLoading} className="w-full flex items-center justify-center px-4 py-3 border border-border rounded-xl glass-effect hover:bg-surface-elevated focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-200 button-hover-scale disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
                           <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
