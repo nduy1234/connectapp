@@ -1,14 +1,10 @@
-import React from 'react';
-import sarahChenAvatar from '@/assets/sarah-chen-avatar.jpg';
-import michaelRodriguezAvatar from '@/assets/michael-rodriguez-avatar.jpg';
-import emilyWatsonAvatar from '@/assets/emily-watson-avatar.jpg';
-import davidKimAvatar from '@/assets/david-kim-avatar.jpg';
-import jessicaLeeAvatar from '@/assets/jessica-lee-avatar.jpg';
+import React, { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { formatDistanceToNow } from 'date-fns';
 
 interface Conversation {
-  id: number;
+  id: string;
   name: string;
-  startupName: string;
   lastMessage: string;
   time: string;
   avatar: string;
@@ -23,83 +19,108 @@ export const ConversationList: React.FC<ConversationListProps> = ({
   searchQuery,
   onSelectConversation,
 }) => {
-  // Sample conversation data
-  const conversations: Conversation[] = [
-    {
-      id: 1,
-      name: 'Sarah Chen',
-      startupName: 'EcoTech Solutions',
-      lastMessage: 'Looking forward to our collaboration!',
-      time: '2m ago',
-      avatar: 'SC',
-    },
-    {
-      id: 2,
-      name: 'Michael Rodriguez',
-      startupName: 'HealthHub AI',
-      lastMessage: "Thanks for the intro, let's connect",
-      time: '15m ago',
-      avatar: 'MR',
-    },
-    {
-      id: 3,
-      name: 'Emily Watson',
-      startupName: 'EduConnect',
-      lastMessage: 'I love your approach to sustainability',
-      time: '1h ago',
-      avatar: 'EW',
-    },
-    {
-      id: 4,
-      name: 'David Kim',
-      startupName: 'FinFlow',
-      lastMessage: 'Nice to learn about your startup',
-      time: '3h ago',
-      avatar: 'DK',
-    },
-    {
-      id: 5,
-      name: 'Jessica Lee',
-      startupName: 'FoodieLink',
-      lastMessage: 'Great meeting you at the conference!',
-      time: '1d ago',
-      avatar: 'JL',
-    },
-  ];
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load conversations from database
+  const loadConversations = async () => {
+    setIsLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Get all messages for this user
+      const { data: messages, error } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      // Group messages by partner_id and get the latest message for each
+      const conversationMap = new Map<string, any>();
+      
+      messages?.forEach((message) => {
+        if (!conversationMap.has(message.partner_id)) {
+          conversationMap.set(message.partner_id, message);
+        }
+      });
+
+      // Convert to conversation format
+      const conversationList: Conversation[] = Array.from(conversationMap.values()).map((message) => {
+        const initials = message.partner_id
+          .split(' ')
+          .map((word: string) => word[0])
+          .join('')
+          .toUpperCase()
+          .substring(0, 2);
+
+        return {
+          id: message.partner_id,
+          name: message.partner_id,
+          lastMessage: message.text,
+          time: formatDistanceToNow(new Date(message.created_at), { addSuffix: true }),
+          avatar: initials,
+        };
+      });
+
+      setConversations(conversationList);
+    } catch (error) {
+      console.error('Error loading conversations:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadConversations();
+
+    // Set up real-time subscription for new messages
+    const channel = supabase
+      .channel('messages-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'messages',
+        },
+        () => {
+          loadConversations();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   // Filter conversations based on search query
   const filteredConversations = conversations.filter(
     (conv) =>
       searchQuery === '' ||
       conv.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      conv.startupName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       conv.lastMessage.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <div className="space-y-3">
-      {filteredConversations.length > 0 ? (
+      {isLoading ? (
+        <div className="text-center py-12">
+          <p className="text-foreground-secondary">Loading conversations...</p>
+        </div>
+      ) : filteredConversations.length > 0 ? (
         filteredConversations.map((conv) => (
           <div
             key={conv.id}
-            onClick={() => onSelectConversation(conv.id.toString(), conv.name)}
+            onClick={() => onSelectConversation(conv.id, conv.name)}
             className="flex items-center space-x-4 p-4 glass-effect rounded-xl hover:bg-accent cursor-pointer transition-all duration-200 card-hover"
           >
             {/* Avatar */}
-            <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center shadow-glow flex-shrink-0 overflow-hidden">
-              {conv.id === 1 ? (
-                <img src={sarahChenAvatar} alt={conv.name} className="w-full h-full object-cover" />
-              ) : conv.id === 2 ? (
-                <img src={michaelRodriguezAvatar} alt={conv.name} className="w-full h-full object-cover" />
-              ) : conv.id === 3 ? (
-                <img src={emilyWatsonAvatar} alt={conv.name} className="w-full h-full object-cover" />
-              ) : conv.id === 4 ? (
-                <img src={davidKimAvatar} alt={conv.name} className="w-full h-full object-cover" />
-              ) : conv.id === 5 ? (
-                <img src={jessicaLeeAvatar} alt={conv.name} className="w-full h-full object-cover" />
-              ) : (
-                <span className="text-white font-bold text-sm">{conv.avatar}</span>
-              )}
+            <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center shadow-glow flex-shrink-0">
+              <span className="text-white font-bold text-sm">{conv.avatar}</span>
             </div>
 
             {/* Content */}
@@ -110,16 +131,14 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                   {conv.time}
                 </span>
               </div>
-              <p className="text-sm text-foreground-secondary truncate mb-1">
-                {conv.startupName}
-              </p>
               <p className="text-sm text-foreground-muted truncate">{conv.lastMessage}</p>
             </div>
           </div>
         ))
       ) : (
         <div className="text-center py-12">
-          <p className="text-foreground-secondary">No conversations found</p>
+          <p className="text-foreground-secondary">No conversations yet</p>
+          <p className="text-sm text-foreground-muted mt-2">Start a conversation to see it here</p>
         </div>
       )}
     </div>
