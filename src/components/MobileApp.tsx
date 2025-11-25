@@ -431,7 +431,7 @@ function MobileApp() {
 
                         <button type="button" onClick={async () => {
                           setIsLoading(true);
-                          await signInAnonymously();
+                          await signInWithApple();
                           setIsLoading(false);
                         }} disabled={isLoading} className="w-full flex items-center justify-center px-4 py-3 bg-foreground hover:bg-foreground-secondary text-background rounded-xl focus:outline-none focus:ring-2 focus:ring-foreground transition-all duration-200 button-hover-scale disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
                           <svg className="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
