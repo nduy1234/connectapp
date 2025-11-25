@@ -83,7 +83,10 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
     if (newMessage.trim()) {
       try {
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        if (!user) {
+          console.error('User not authenticated');
+          return;
+        }
 
         const timestamp = new Date().toLocaleTimeString('en-US', {
           hour: 'numeric',
@@ -111,7 +114,7 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
         };
         setMessages([...messages, message]);
         setNewMessage('');
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error sending message:', error);
       }
     }
