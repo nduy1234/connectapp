@@ -255,6 +255,15 @@ function MobileApp() {
     setSelectedOptions(prev => prev.includes(option) ? prev.filter(item => item !== option) : [...prev, option]);
   };
   const handleSaveProfile = async () => {
+    if (!authUser) {
+      toast({
+        title: 'Error',
+        description: 'You must be signed in to save your profile',
+        variant: 'destructive'
+      });
+      return;
+    }
+
     setIsSaving(true);
 
     try {
@@ -263,17 +272,23 @@ function MobileApp() {
       let vidUrl = videoUrl;
 
       if (selectedImage) {
-        const { url } = await uploadFile(selectedImage, 'profile-images');
+        const { url, error: uploadError } = await uploadFile(selectedImage, 'profile-images');
+        if (uploadError) {
+          throw new Error('Failed to upload profile image');
+        }
         if (url) imageUrl = url;
       }
 
       if (selectedVideo) {
-        const { url } = await uploadFile(selectedVideo, 'profile-videos');
+        const { url, error: uploadError } = await uploadFile(selectedVideo, 'profile-videos');
+        if (uploadError) {
+          throw new Error('Failed to upload video');
+        }
         if (url) vidUrl = url;
       }
 
       // Save profile data
-      await saveProfile({
+      const { error } = await saveProfile({
         startup_story: profileData.startupStory,
         company_name: profileData.companyName,
         location: profileData.location,
@@ -284,12 +299,21 @@ function MobileApp() {
         video_url: vidUrl
       });
 
+      if (error) {
+        throw error;
+      }
+
       setProfileImageUrl(imageUrl);
       setVideoUrl(vidUrl);
       setSelectedImage(null);
       setSelectedVideo(null);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving profile:', error);
+      toast({
+        title: 'Save failed',
+        description: error.message || 'Failed to save profile. Please try again.',
+        variant: 'destructive'
+      });
     } finally {
       setIsSaving(false);
     }
