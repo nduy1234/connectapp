@@ -8,6 +8,7 @@ import { ComposeMessageDialog } from './ComposeMessageDialog';
 import { AddStartupDialog } from './AddStartupDialog';
 import { EditStartupDialog } from './EditStartupDialog';
 import { AddResourceDialog } from './AddResourceDialog';
+import { EditResourceDialog } from './EditResourceDialog';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
@@ -77,6 +78,8 @@ function MobileApp() {
   const [showEditStartupDialog, setShowEditStartupDialog] = useState(false);
   const [editingStartup, setEditingStartup] = useState<any>(null);
   const [showAddResourceDialog, setShowAddResourceDialog] = useState(false);
+  const [showEditResourceDialog, setShowEditResourceDialog] = useState(false);
+  const [editingResource, setEditingResource] = useState<any>(null);
   const [favoriteStartups, setFavoriteStartups] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [resourceSearchQuery, setResourceSearchQuery] = useState('');
@@ -89,6 +92,7 @@ function MobileApp() {
     category: string;
     description: string;
     contact: string;
+    user_id: string;
   }>>([]);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
@@ -384,6 +388,42 @@ function MobileApp() {
   const handleEditStartup = (startup: any) => {
     setEditingStartup(startup);
     setShowEditStartupDialog(true);
+  };
+
+  const handleDeleteResource = async (resourceId: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
+      const { error } = await supabase
+        .from('resources')
+        .delete()
+        .eq('id', resourceId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: 'Success',
+        description: 'Resource deleted successfully'
+      });
+
+      loadResources();
+    } catch (error) {
+      console.error('Error deleting resource:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to delete resource',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const handleEditResource = (resource: any) => {
+    setEditingResource(resource);
+    setShowEditResourceDialog(true);
   };
   
   if (currentScreen === 'signin' || currentScreen === 'forgot-password' || currentScreen === 'reset-success') {
@@ -925,10 +965,36 @@ function MobileApp() {
                       .map((resource) => (
                       <Card key={resource.id} className="p-4 hover:shadow-lg transition-shadow">
                         <div className="flex justify-between items-start mb-2">
-                          <h3 className="text-lg font-semibold text-foreground">{resource.title}</h3>
-                          <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
-                            {resource.category}
-                          </span>
+                          <div className="flex-1">
+                            <div className="flex items-start justify-between mb-1">
+                              <h3 className="text-lg font-semibold text-foreground">{resource.title}</h3>
+                              <div className="flex items-center gap-2">
+                                {authUser?.id === resource.user_id && (
+                                  <>
+                                    <Edit 
+                                      className="h-4 w-4 cursor-pointer text-foreground-muted hover:text-primary transition-all"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleEditResource(resource);
+                                      }}
+                                    />
+                                    <Trash2 
+                                      className="h-4 w-4 cursor-pointer text-foreground-muted hover:text-destructive transition-all"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (confirm('Are you sure you want to delete this resource?')) {
+                                          handleDeleteResource(resource.id);
+                                        }
+                                      }}
+                                    />
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                            <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary inline-block mb-2">
+                              {resource.category}
+                            </span>
+                          </div>
                         </div>
                         <p className="text-sm text-muted-foreground mb-3">{resource.description}</p>
                         <div className="flex items-center text-sm text-muted-foreground">
@@ -1351,6 +1417,12 @@ function MobileApp() {
               });
             }
           }}
+        />
+        <EditResourceDialog 
+          open={showEditResourceDialog} 
+          onOpenChange={setShowEditResourceDialog} 
+          onResourceUpdated={loadResources}
+          resource={editingResource}
         />
       </div>
     </div>;
