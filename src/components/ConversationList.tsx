@@ -29,17 +29,10 @@ export const ConversationList: React.FC<ConversationListProps> = ({
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Get all messages for this user with startup info
+      // Get all messages for this user
       const { data: messages, error } = await supabase
         .from('messages')
-        .select(`
-          *,
-          startups:partner_id (
-            founder_name,
-            startup_name,
-            image_url
-          )
-        `)
+        .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
@@ -54,9 +47,25 @@ export const ConversationList: React.FC<ConversationListProps> = ({
         }
       });
 
+      // Get unique partner IDs
+      const partnerIds = Array.from(conversationMap.keys());
+
+      // Fetch startup info for all partners
+      const { data: startups, error: startupsError } = await supabase
+        .from('startups')
+        .select('id, founder_name, startup_name, image_url')
+        .in('id', partnerIds);
+
+      if (startupsError) throw startupsError;
+
+      // Create a map of startup data by ID
+      const startupMap = new Map(
+        startups?.map((s) => [s.id, s]) || []
+      );
+
       // Convert to conversation format
       const conversationList: Conversation[] = Array.from(conversationMap.values()).map((message) => {
-        const startup = message.startups;
+        const startup = startupMap.get(message.partner_id);
         const founderName = startup?.founder_name || 'Unknown';
         const startupName = startup?.startup_name || '';
         const displayName = startupName ? `${founderName} - ${startupName}` : founderName;
