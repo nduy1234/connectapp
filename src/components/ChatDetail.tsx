@@ -20,12 +20,14 @@ interface ChatDetailProps {
   partnerId: string;
   partnerName: string;
   onBack: () => void;
+  partnerAvatar?: string | null;
 }
 
 export const ChatDetail: React.FC<ChatDetailProps> = ({
   partnerId,
   partnerName,
   onBack,
+  partnerAvatar,
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
@@ -200,7 +202,7 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
       .toUpperCase();
   };
 
-  const avatarSrc = getPartnerAvatar();
+  const avatarSrc = partnerAvatar || getPartnerAvatar();
 
   return (
     <div className="flex flex-col h-screen bg-gradient-background">
