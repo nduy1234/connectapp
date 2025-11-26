@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDistanceToNow } from 'date-fns';
+import sarahChenAvatar from '@/assets/sarah-chen-avatar.jpg';
+import michaelRodriguezAvatar from '@/assets/michael-rodriguez-avatar.jpg';
+import emilyWatsonAvatar from '@/assets/emily-watson-avatar.jpg';
+import davidKimAvatar from '@/assets/david-kim-avatar.jpg';
+import jessicaLeeAvatar from '@/assets/jessica-lee-avatar.jpg';
 
 interface Conversation {
   id: string;
@@ -84,6 +89,19 @@ export const ConversationList: React.FC<ConversationListProps> = ({
           const startupName = startup?.startup_name || '';
           const displayName = startupName ? `${founderName} - ${startupName}` : founderName;
           
+          // Map founder names to avatars (same logic as Startups screen)
+          const getAvatarForFounder = (name: string, imageUrl: string | null) => {
+            const lowerName = name.toLowerCase();
+            if (lowerName.includes('sarah chen')) return sarahChenAvatar;
+            if (lowerName.includes('michael rodriguez')) return michaelRodriguezAvatar;
+            if (lowerName.includes('emily watson')) return emilyWatsonAvatar;
+            if (lowerName.includes('david kim')) return davidKimAvatar;
+            if (lowerName.includes('jessica lee')) return jessicaLeeAvatar;
+            return imageUrl;
+          };
+
+          const avatarUrl = getAvatarForFounder(founderName, startup?.image_url || null);
+          
           const initials = founderName
             .split(' ')
             .map((word: string) => word[0])
@@ -96,7 +114,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
             name: displayName,
             lastMessage: message.text,
             time: formatDistanceToNow(new Date(message.created_at), { addSuffix: true }),
-            avatar: startup?.image_url || initials,
+            avatar: avatarUrl || initials,
           };
         });
 
