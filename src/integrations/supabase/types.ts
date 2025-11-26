@@ -41,6 +41,39 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          read: boolean
+          related_data: Json | null
+          related_id: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          read?: boolean
+          related_data?: Json | null
+          related_id?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          read?: boolean
+          related_data?: Json | null
+          related_id?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           company_name: string | null
@@ -124,6 +157,7 @@ export type Database = {
           id: string
           image_url: string | null
           industry: string
+          is_favorite: boolean | null
           location: string
           startup_name: string
           updated_at: string
@@ -136,6 +170,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           industry: string
+          is_favorite?: boolean | null
           location: string
           startup_name: string
           updated_at?: string
@@ -148,6 +183,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           industry?: string
+          is_favorite?: boolean | null
           location?: string
           startup_name?: string
           updated_at?: string

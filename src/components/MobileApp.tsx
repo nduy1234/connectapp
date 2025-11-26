@@ -83,6 +83,16 @@ function MobileApp() {
   const [favoriteStartups, setFavoriteStartups] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [resourceSearchQuery, setResourceSearchQuery] = useState('');
+  const [notifications, setNotifications] = useState<Array<{
+    id: string;
+    type: string;
+    message: string;
+    read: boolean;
+    created_at: string;
+    related_id: string | null;
+  }>>([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [startups, setStartups] = useState<any[]>([]);
   const [isLoadingStartups, setIsLoadingStartups] = useState(false);
   const [isLoadingResources, setIsLoadingResources] = useState(false);
@@ -192,6 +202,129 @@ function MobileApp() {
     if (authUser && currentScreen === 'main') {
       loadResources();
     }
+  }, [authUser, currentScreen]);
+
+  // Load notifications
+  const loadNotifications = async () => {
+    if (!authUser) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      setNotifications(data || []);
+      setUnreadCount((data || []).filter((n: any) => !n.read).length);
+    } catch (error) {
+      console.error('Error loading notifications:', error);
+    }
+  };
+
+  // Create notification
+  const createNotification = async (type: string, message: string, relatedId?: string) => {
+    if (!authUser) return;
+
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .insert({
+          user_id: authUser.id,
+          type,
+          message,
+          related_id: relatedId || null
+        });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error creating notification:', error);
+    }
+  };
+
+  // Mark notification as read
+  const markAsRead = async (notificationId: string) => {
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .update({ read: true })
+        .eq('id', notificationId);
+
+      if (error) throw error;
+
+      setNotifications(prev => 
+        prev.map(n => n.id === notificationId ? { ...n, read: true } : n)
+      );
+      setUnreadCount(prev => Math.max(0, prev - 1));
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
+  };
+
+  // Load notifications when authenticated
+  useEffect(() => {
+    if (authUser && currentScreen === 'main') {
+      loadNotifications();
+    }
+  }, [authUser, currentScreen]);
+
+  // Subscribe to real-time notifications
+  useEffect(() => {
+    if (!authUser || currentScreen !== 'main') return;
+
+    const channel = supabase
+      .channel('notifications-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${authUser.id}`
+        },
+        (payload) => {
+          setNotifications(prev => [payload.new as any, ...prev]);
+          setUnreadCount(prev => prev + 1);
+          toast({
+            title: 'New notification',
+            description: (payload.new as any).message
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [authUser, currentScreen]);
+
+  // Subscribe to new messages to create notifications
+  useEffect(() => {
+    if (!authUser || currentScreen !== 'main') return;
+
+    const channel = supabase
+      .channel('messages-notifications')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `user_id=eq.${authUser.id}`
+        },
+        (payload) => {
+          const message = payload.new as any;
+          if (!message.sent_by_me) {
+            createNotification('message', 'You have a new message', message.id);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [authUser, currentScreen]);
 
   // Filter startups based on search query
@@ -314,6 +447,9 @@ function MobileApp() {
       setVideoUrl(vidUrl);
       setSelectedImage(null);
       setSelectedVideo(null);
+
+      // Create notification for profile update
+      await createNotification('profile', 'Your profile has been updated successfully');
     } catch (error: any) {
       console.error('Error saving profile:', error);
       toast({
@@ -346,12 +482,18 @@ function MobileApp() {
     setVideoUrl('');
   };
 
-  const toggleFavorite = (startupName: string) => {
+  const toggleFavorite = async (startupName: string) => {
+    const isFavoriting = !favoriteStartups.includes(startupName);
+    
     setFavoriteStartups(prev => 
       prev.includes(startupName) 
         ? prev.filter(name => name !== startupName)
         : [...prev, startupName]
     );
+
+    if (isFavoriting) {
+      await createNotification('favorite', `You saved ${startupName} as a favorite`);
+    }
   };
 
   const handleDeleteStartup = async (startupId: string) => {
@@ -684,8 +826,15 @@ function MobileApp() {
                   </h1>
                   <p className="text-foreground-secondary mt-1">Here's what's happening today</p>
                 </div>
-                <div className="w-16 h-12 bg-gradient-primary rounded-2xl flex items-center justify-center shadow-glow">
-                  <span className="text-white font-bold text-sm tracking-wide">connect</span>
+                <div className="relative">
+                  <div className="w-16 h-12 bg-gradient-primary rounded-2xl flex items-center justify-center shadow-glow">
+                    <span className="text-white font-bold text-sm tracking-wide">connect</span>
+                  </div>
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-destructive text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">
+                      {unreadCount}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -693,46 +842,68 @@ function MobileApp() {
               <div className="glass-effect rounded-2xl p-6 shadow-xl">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-foreground">Recent Notifications</h2>
+                  {unreadCount > 0 && (
+                    <span className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-xs font-semibold">
+                      {unreadCount} new
+                    </span>
+                  )}
                 </div>
                 <div className="space-y-3">
-                  <div className="group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-info/5 to-transparent hover:from-info/10 transition-all duration-300 cursor-pointer border border-transparent hover:border-info/20">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-info/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <MessageSquare className="w-5 h-5 text-info" />
+                  {notifications.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <Bell className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                      <p>No notifications yet</p>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2 mb-1">
-                        <p className="font-semibold text-foreground">New message received</p>
-                        <span className="text-xs text-muted-foreground whitespace-nowrap">2m ago</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground line-clamp-2">You have a new message from Sarah</p>
-                    </div>
-                  </div>
-                  
-                  <div className="group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-success/5 to-transparent hover:from-success/10 transition-all duration-300 cursor-pointer border border-transparent hover:border-success/20">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-success/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <CheckCircle2 className="w-5 h-5 text-success" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2 mb-1">
-                        <p className="font-semibold text-foreground">Profile updated</p>
-                        <span className="text-xs text-muted-foreground whitespace-nowrap">1h ago</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground line-clamp-2">Your profile has been successfully updated</p>
-                    </div>
-                  </div>
-                  
-                  <div className="group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-secondary/5 to-transparent hover:from-secondary/10 transition-all duration-300 cursor-pointer border border-transparent hover:border-secondary/20">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <UserPlus className="w-5 h-5 text-secondary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2 mb-1">
-                        <p className="font-semibold text-foreground">New Connection</p>
-                        <span className="text-xs text-muted-foreground whitespace-nowrap">3h ago</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground line-clamp-2">John connected with you</p>
-                    </div>
-                  </div>
+                  ) : (
+                    notifications.slice(0, 5).map((notification) => {
+                      const getNotificationIcon = (type: string) => {
+                        switch (type) {
+                          case 'message': return MessageSquare;
+                          case 'profile': return CheckCircle2;
+                          case 'favorite': return Star;
+                          default: return Bell;
+                        }
+                      };
+
+                      const getNotificationColor = (type: string) => {
+                        switch (type) {
+                          case 'message': return 'info';
+                          case 'profile': return 'success';
+                          case 'favorite': return 'secondary';
+                          default: return 'primary';
+                        }
+                      };
+
+                      const Icon = getNotificationIcon(notification.type);
+                      const color = getNotificationColor(notification.type);
+                      const timeAgo = new Date(notification.created_at).toLocaleString();
+
+                      return (
+                        <div 
+                          key={notification.id}
+                          onClick={() => !notification.read && markAsRead(notification.id)}
+                          className={`group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-${color}/5 to-transparent hover:from-${color}/10 transition-all duration-300 cursor-pointer border border-transparent hover:border-${color}/20 ${!notification.read ? 'bg-primary/5' : ''}`}
+                        >
+                          <div className={`flex-shrink-0 w-10 h-10 rounded-full bg-${color}/10 flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                            <Icon className={`w-5 h-5 text-${color}`} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between gap-2 mb-1">
+                              <p className={`font-semibold text-foreground ${!notification.read ? 'font-bold' : ''}`}>
+                                {notification.type === 'message' && 'New message received'}
+                                {notification.type === 'profile' && 'Profile updated'}
+                                {notification.type === 'favorite' && 'New Favorite'}
+                              </p>
+                              <span className="text-xs text-muted-foreground whitespace-nowrap">
+                                {new Date(notification.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            </div>
+                            <p className="text-sm text-muted-foreground line-clamp-2">{notification.message}</p>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
               </div>
 
