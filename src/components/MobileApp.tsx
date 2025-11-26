@@ -1237,7 +1237,7 @@ function MobileApp() {
           open={showNewMessageDialog}
           onOpenChange={setShowNewMessageDialog}
           onSelectContact={(contactId, contactName) => {
-            setSelectedChatUserId(contactId.toString());
+            setSelectedChatUserId(contactId);
             setSelectedChatUserName(contactName);
           }}
         />

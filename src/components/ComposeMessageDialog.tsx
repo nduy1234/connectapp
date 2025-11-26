@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -8,20 +8,16 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
-import sarahChenAvatar from '@/assets/sarah-chen-avatar.jpg';
-import michaelRodriguezAvatar from '@/assets/michael-rodriguez-avatar.jpg';
-import emilyWatsonAvatar from '@/assets/emily-watson-avatar.jpg';
-import davidKimAvatar from '@/assets/david-kim-avatar.jpg';
-import jessicaLeeAvatar from '@/assets/jessica-lee-avatar.jpg';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ComposeMessageDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSelectContact: (contactId: number, contactName: string) => void;
+  onSelectContact: (contactId: string, contactName: string) => void;
 }
 
 interface Contact {
-  id: number;
+  id: string;
   name: string;
   startupName: string;
   avatar: string;
@@ -33,14 +29,50 @@ export const ComposeMessageDialog: React.FC<ComposeMessageDialogProps> = ({
   onSelectContact,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const contacts: Contact[] = [
-    { id: 6, name: 'Sarah Chen', startupName: 'TechFlow AI', avatar: 'SC' },
-    { id: 7, name: 'Michael Rodriguez', startupName: 'FinWave', avatar: 'MR' },
-    { id: 8, name: 'Emily Watson', startupName: 'GreenTech Solutions', avatar: 'EW' },
-    { id: 9, name: 'David Kim', startupName: 'HealthHub', avatar: 'DK' },
-    { id: 10, name: 'Jessica Lee', startupName: 'EduConnect', avatar: 'JL' },
-  ];
+  // Load startups from database
+  useEffect(() => {
+    if (open) {
+      loadContacts();
+    }
+  }, [open]);
+
+  const loadContacts = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('startups')
+        .select('id, founder_name, startup_name, image_url')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      if (data) {
+        const formattedContacts: Contact[] = data.map((startup) => {
+          const initials = startup.founder_name
+            .split(' ')
+            .map((word: string) => word[0])
+            .join('')
+            .toUpperCase()
+            .substring(0, 2);
+
+          return {
+            id: startup.id,
+            name: startup.founder_name,
+            startupName: startup.startup_name,
+            avatar: startup.image_url || initials,
+          };
+        });
+        setContacts(formattedContacts);
+      }
+    } catch (error) {
+      console.error('Error loading contacts:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const filteredContacts = contacts.filter(
     (contact) =>
@@ -50,7 +82,8 @@ export const ComposeMessageDialog: React.FC<ComposeMessageDialogProps> = ({
   );
 
   const handleSelectContact = (contact: Contact) => {
-    onSelectContact(contact.id, contact.name);
+    const displayName = `${contact.name} - ${contact.startupName}`;
+    onSelectContact(contact.id, displayName);
     onOpenChange(false);
   };
 
@@ -75,7 +108,11 @@ export const ComposeMessageDialog: React.FC<ComposeMessageDialogProps> = ({
 
           {/* Contacts List */}
           <div className="space-y-2 max-h-[400px] overflow-y-auto custom-scrollbar">
-            {filteredContacts.length > 0 ? (
+            {isLoading ? (
+              <div className="text-center py-8">
+                <p className="text-foreground-secondary">Loading contacts...</p>
+              </div>
+            ) : filteredContacts.length > 0 ? (
               filteredContacts.map((contact) => (
                 <div
                   key={contact.id}
@@ -83,16 +120,8 @@ export const ComposeMessageDialog: React.FC<ComposeMessageDialogProps> = ({
                   className="flex items-center space-x-3 p-3 glass-effect rounded-xl hover:bg-accent cursor-pointer transition-all duration-200"
                 >
                   <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center shadow-glow flex-shrink-0 overflow-hidden">
-                    {contact.id === 6 ? (
-                      <img src={sarahChenAvatar} alt={contact.name} className="w-full h-full object-cover" />
-                    ) : contact.id === 7 ? (
-                      <img src={michaelRodriguezAvatar} alt={contact.name} className="w-full h-full object-cover" />
-                    ) : contact.id === 8 ? (
-                      <img src={emilyWatsonAvatar} alt={contact.name} className="w-full h-full object-cover" />
-                    ) : contact.id === 9 ? (
-                      <img src={davidKimAvatar} alt={contact.name} className="w-full h-full object-cover" />
-                    ) : contact.id === 10 ? (
-                      <img src={jessicaLeeAvatar} alt={contact.name} className="w-full h-full object-cover" />
+                    {contact.avatar.startsWith('http') ? (
+                      <img src={contact.avatar} alt={contact.name} className="w-full h-full object-cover" />
                     ) : (
                       <span className="text-white font-bold text-sm">{contact.avatar}</span>
                     )}
@@ -107,7 +136,9 @@ export const ComposeMessageDialog: React.FC<ComposeMessageDialogProps> = ({
               ))
             ) : (
               <div className="text-center py-8">
-                <p className="text-foreground-secondary">No contacts found</p>
+                <p className="text-foreground-secondary">
+                  {contacts.length === 0 ? 'No startups available yet' : 'No contacts found'}
+                </p>
               </div>
             )}
           </div>
