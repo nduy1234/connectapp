@@ -174,7 +174,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
           >
             {/* Avatar */}
             <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center shadow-glow flex-shrink-0 overflow-hidden">
-              {conv.avatar.startsWith('http') ? (
+              {conv.avatar && conv.avatar.length > 2 ? (
                 <img src={conv.avatar} alt={conv.name} className="w-full h-full object-cover" />
               ) : (
                 <span className="text-white font-bold text-sm">{conv.avatar}</span>
