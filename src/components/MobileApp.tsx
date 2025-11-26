@@ -895,6 +895,8 @@ function MobileApp() {
                           case 'message': return MessageSquare;
                           case 'profile': return CheckCircle2;
                           case 'favorite': return Star;
+                          case 'startup': return Rocket;
+                          case 'resource': return BookOpen;
                           default: return Bell;
                         }
                       };
@@ -904,6 +906,8 @@ function MobileApp() {
                           case 'message': return 'info';
                           case 'profile': return 'success';
                           case 'favorite': return 'secondary';
+                          case 'startup': return 'warning';
+                          case 'resource': return 'primary';
                           default: return 'primary';
                         }
                       };
@@ -927,6 +931,8 @@ function MobileApp() {
                                 {notification.type === 'message' && 'New message received'}
                                 {notification.type === 'profile' && 'Profile updated'}
                                 {notification.type === 'favorite' && 'New Favorite'}
+                                {notification.type === 'startup' && 'Startup Added'}
+                                {notification.type === 'resource' && 'Resource Added'}
                               </p>
                               <span className="text-xs text-muted-foreground whitespace-nowrap">
                                 {new Date(notification.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -1576,7 +1582,10 @@ function MobileApp() {
         <AddStartupDialog 
           open={showAddStartupDialog} 
           onOpenChange={setShowAddStartupDialog} 
-          onStartupAdded={loadStartups} 
+          onStartupAdded={() => {
+            loadStartups();
+            createNotification('startup', 'New startup added successfully');
+          }} 
         />
         <EditStartupDialog 
           open={showEditStartupDialog} 
@@ -1610,6 +1619,7 @@ function MobileApp() {
               if (error) throw error;
 
               setResources((prev) => [data, ...prev]);
+              createNotification('resource', `New resource added: ${resource.title}`);
               toast({
                 title: "Success",
                 description: "Resource shared successfully!",
