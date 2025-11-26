@@ -29,10 +29,17 @@ export const ConversationList: React.FC<ConversationListProps> = ({
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Get all messages for this user
+      // Get all messages for this user with startup info
       const { data: messages, error } = await supabase
         .from('messages')
-        .select('*')
+        .select(`
+          *,
+          startups:partner_id (
+            founder_name,
+            startup_name,
+            image_url
+          )
+        `)
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
@@ -49,7 +56,12 @@ export const ConversationList: React.FC<ConversationListProps> = ({
 
       // Convert to conversation format
       const conversationList: Conversation[] = Array.from(conversationMap.values()).map((message) => {
-        const initials = message.partner_id
+        const startup = message.startups;
+        const founderName = startup?.founder_name || 'Unknown';
+        const startupName = startup?.startup_name || '';
+        const displayName = startupName ? `${founderName} - ${startupName}` : founderName;
+        
+        const initials = founderName
           .split(' ')
           .map((word: string) => word[0])
           .join('')
@@ -58,10 +70,10 @@ export const ConversationList: React.FC<ConversationListProps> = ({
 
         return {
           id: message.partner_id,
-          name: message.partner_id,
+          name: displayName,
           lastMessage: message.text,
           time: formatDistanceToNow(new Date(message.created_at), { addSuffix: true }),
-          avatar: initials,
+          avatar: startup?.image_url || initials,
         };
       });
 
@@ -119,8 +131,12 @@ export const ConversationList: React.FC<ConversationListProps> = ({
             className="flex items-center space-x-4 p-4 glass-effect rounded-xl hover:bg-accent cursor-pointer transition-all duration-200 card-hover"
           >
             {/* Avatar */}
-            <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center shadow-glow flex-shrink-0">
-              <span className="text-white font-bold text-sm">{conv.avatar}</span>
+            <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center shadow-glow flex-shrink-0 overflow-hidden">
+              {conv.avatar.startsWith('http') ? (
+                <img src={conv.avatar} alt={conv.name} className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-white font-bold text-sm">{conv.avatar}</span>
+              )}
             </div>
 
             {/* Content */}

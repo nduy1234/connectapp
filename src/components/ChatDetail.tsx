@@ -3,11 +3,6 @@ import { ArrowLeft, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
-import sarahChenAvatar from '@/assets/sarah-chen-avatar.jpg';
-import michaelRodriguezAvatar from '@/assets/michael-rodriguez-avatar.jpg';
-import emilyWatsonAvatar from '@/assets/emily-watson-avatar.jpg';
-import davidKimAvatar from '@/assets/david-kim-avatar.jpg';
-import jessicaLeeAvatar from '@/assets/jessica-lee-avatar.jpg';
 
 interface Message {
   id: number;
@@ -30,7 +25,30 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [partnerImage, setPartnerImage] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Load partner info
+  useEffect(() => {
+    loadPartnerInfo();
+  }, [partnerId]);
+
+  const loadPartnerInfo = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('startups')
+        .select('image_url')
+        .eq('id', partnerId)
+        .single();
+
+      if (error) throw error;
+      if (data) {
+        setPartnerImage(data.image_url);
+      }
+    } catch (error) {
+      console.error('Error loading partner info:', error);
+    }
+  };
 
   // Load messages from database
   useEffect(() => {
@@ -141,16 +159,8 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center shadow-glow flex-shrink-0 overflow-hidden">
-            {partnerId === '1' ? (
-              <img src={sarahChenAvatar} alt={partnerName} className="w-full h-full object-cover" />
-            ) : partnerId === '2' ? (
-              <img src={michaelRodriguezAvatar} alt={partnerName} className="w-full h-full object-cover" />
-            ) : partnerId === '3' ? (
-              <img src={emilyWatsonAvatar} alt={partnerName} className="w-full h-full object-cover" />
-            ) : partnerId === '4' ? (
-              <img src={davidKimAvatar} alt={partnerName} className="w-full h-full object-cover" />
-            ) : partnerId === '5' ? (
-              <img src={jessicaLeeAvatar} alt={partnerName} className="w-full h-full object-cover" />
+            {partnerImage ? (
+              <img src={partnerImage} alt={partnerName} className="w-full h-full object-cover" />
             ) : (
               <span className="text-white font-bold text-sm">{getInitials(partnerName)}</span>
             )}
