@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Home, User, BookOpen, MessageCircle, Briefcase, Bell, Settings, Eye, EyeOff, Mail, Lock, ArrowLeft, Check, Loader2, Users, Calendar, Activity, Rocket, Camera, Video, Upload, Search, Plus, LogOut, Star, MessageSquare, CheckCircle2, UserPlus } from 'lucide-react';
+import { Home, User, BookOpen, MessageCircle, Briefcase, Bell, Settings, Eye, EyeOff, Mail, Lock, ArrowLeft, Check, Loader2, Users, Calendar, Activity, Rocket, Camera, Video, Upload, Search, Plus, LogOut, Star, MessageSquare, CheckCircle2, UserPlus, Edit, Trash2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ConversationList } from './ConversationList';
 import { ChatDetail } from './ChatDetail';
 import { ComposeMessageDialog } from './ComposeMessageDialog';
 import { AddStartupDialog } from './AddStartupDialog';
+import { EditStartupDialog } from './EditStartupDialog';
 import { AddResourceDialog } from './AddResourceDialog';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
@@ -73,6 +74,8 @@ function MobileApp() {
   const [selectedChatUserName, setSelectedChatUserName] = useState<string>('');
   const [showNewMessageDialog, setShowNewMessageDialog] = useState(false);
   const [showAddStartupDialog, setShowAddStartupDialog] = useState(false);
+  const [showEditStartupDialog, setShowEditStartupDialog] = useState(false);
+  const [editingStartup, setEditingStartup] = useState<any>(null);
   const [showAddResourceDialog, setShowAddResourceDialog] = useState(false);
   const [favoriteStartups, setFavoriteStartups] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -345,6 +348,42 @@ function MobileApp() {
         ? prev.filter(name => name !== startupName)
         : [...prev, startupName]
     );
+  };
+
+  const handleDeleteStartup = async (startupId: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
+      const { error } = await supabase
+        .from('startups')
+        .delete()
+        .eq('id', startupId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: 'Success',
+        description: 'Startup deleted successfully'
+      });
+
+      loadStartups();
+    } catch (error) {
+      console.error('Error deleting startup:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to delete startup',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const handleEditStartup = (startup: any) => {
+    setEditingStartup(startup);
+    setShowEditStartupDialog(true);
   };
   
   if (currentScreen === 'signin' || currentScreen === 'forgot-password' || currentScreen === 'reset-success') {
@@ -1008,7 +1047,7 @@ function MobileApp() {
                     };
                     
                     return (
-                      <Card key={startup.id} className="glass-effect p-4 cursor-pointer hover:shadow-lg transition-all duration-200 card-hover">
+                      <Card key={startup.id} className="glass-effect p-4 hover:shadow-lg transition-all duration-200">
                         <div className="flex items-start space-x-4">
                           <Avatar className="h-14 w-14">
                             <AvatarImage src={getAvatarForFounder(startup.founder_name)} alt={startup.founder_name} />
@@ -1025,6 +1064,26 @@ function MobileApp() {
                                     toggleFavorite(startup.startup_name);
                                   }}
                                 />
+                                {authUser?.id === startup.user_id && (
+                                  <>
+                                    <Edit 
+                                      className="h-4 w-4 cursor-pointer text-foreground-muted hover:text-primary transition-all"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleEditStartup(startup);
+                                      }}
+                                    />
+                                    <Trash2 
+                                      className="h-4 w-4 cursor-pointer text-foreground-muted hover:text-destructive transition-all"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (confirm('Are you sure you want to delete this startup?')) {
+                                          handleDeleteStartup(startup.id);
+                                        }
+                                      }}
+                                    />
+                                  </>
+                                )}
                               </div>
                             </div>
                             <p className="text-sm font-medium text-primary mb-1">{startup.startup_name}</p>
@@ -1243,10 +1302,16 @@ function MobileApp() {
         />
 
         {/* Add Startup Dialog */}
-        <AddStartupDialog
-          open={showAddStartupDialog}
-          onOpenChange={setShowAddStartupDialog}
-          onStartupAdded={loadStartups}
+        <AddStartupDialog 
+          open={showAddStartupDialog} 
+          onOpenChange={setShowAddStartupDialog} 
+          onStartupAdded={loadStartups} 
+        />
+        <EditStartupDialog 
+          open={showEditStartupDialog} 
+          onOpenChange={setShowEditStartupDialog} 
+          onStartupUpdated={loadStartups}
+          startup={editingStartup}
         />
 
         {/* Add Resource Dialog */}
