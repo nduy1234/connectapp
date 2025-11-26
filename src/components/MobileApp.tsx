@@ -71,6 +71,7 @@ function MobileApp() {
   const [messageSearchQuery, setMessageSearchQuery] = useState('');
   const [selectedChatUserId, setSelectedChatUserId] = useState<string | null>(null);
   const [selectedChatUserName, setSelectedChatUserName] = useState<string>('');
+  const [selectedChatUserAvatar, setSelectedChatUserAvatar] = useState<string | null>(null);
   const [showNewMessageDialog, setShowNewMessageDialog] = useState(false);
   const [showAddStartupDialog, setShowAddStartupDialog] = useState(false);
   const [showAddResourceDialog, setShowAddResourceDialog] = useState(false);
@@ -592,288 +593,381 @@ function MobileApp() {
         </div>
       </div>;
   }
-  return <div className="mobile-container">
-      <div className="min-h-screen bg-gradient-background">
+  return (
+    <div className='mobile-container'>
+      <div className='min-h-screen bg-gradient-background'>
         {/* Main Content */}
-        <div className="pb-20 custom-scrollbar">
-          {activeTab === 'home' && <div className="p-6 space-y-8">
+        <div className='pb-20 custom-scrollbar'>
+          {activeTab === 'home' && (
+            <div className='p-6 space-y-8'>
               {/* Header */}
-              <div className="flex items-center justify-between">
+              <div className='flex items-center justify-between'>
                 <div>
-                  <h1 className="text-3xl font-bold gradient-text">
+                  <h1 className='text-3xl font-bold gradient-text'>
                     Welcome back, {user?.firstName}!
                   </h1>
-                  <p className="text-foreground-secondary mt-1">Here's what's happening today</p>
+                  <p className='text-foreground-secondary mt-1'>Here's what's happening today</p>
                 </div>
-                <div className="w-16 h-12 bg-gradient-primary rounded-2xl flex items-center justify-center shadow-glow">
-                  <span className="text-white font-bold text-sm tracking-wide">connect</span>
+                <div className='w-16 h-12 bg-gradient-primary rounded-2xl flex items-center justify-center shadow-glow'>
+                  <span className='text-white font-bold text-sm tracking-wide'>connect</span>
                 </div>
               </div>
 
               {/* Notifications Section */}
-              <div className="glass-effect rounded-2xl p-6 shadow-xl">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-foreground">Recent Notifications</h2>
+              <div className='glass-effect rounded-2xl p-6 shadow-xl'>
+                <div className='flex items-center justify-between mb-6'>
+                  <h2 className='text-xl font-bold text-foreground'>Recent Notifications</h2>
                 </div>
-                <div className="space-y-3">
-                  <div className="group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-info/5 to-transparent hover:from-info/10 transition-all duration-300 cursor-pointer border border-transparent hover:border-info/20">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-info/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <MessageSquare className="w-5 h-5 text-info" />
+                <div className='space-y-3'>
+                  <div className='group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-info/5 to-transparent hover:from-info/10 transition-all duration-300 cursor-pointer border border-transparent hover:border-info/20'>
+                    <div className='flex-shrink-0 w-10 h-10 rounded-full bg-info/10 flex items-center justify-center group-hover:scale-110 transition-transform'>
+                      <MessageSquare className='w-5 h-5 text-info' />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2 mb-1">
-                        <p className="font-semibold text-foreground">New message received</p>
-                        <span className="text-xs text-muted-foreground whitespace-nowrap">2m ago</span>
+                    <div className='flex-1 min-w-0'>
+                      <div className='flex items-start justify-between gap-2 mb-1'>
+                        <p className='font-semibold text-foreground'>New message received</p>
+                        <span className='text-xs text-muted-foreground whitespace-nowrap'>2m ago</span>
                       </div>
-                      <p className="text-sm text-muted-foreground line-clamp-2">You have a new message from Sarah</p>
+                      <p className='text-sm text-muted-foreground line-clamp-2'>You have a new message from Sarah</p>
                     </div>
                   </div>
-                  
-                  <div className="group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-success/5 to-transparent hover:from-success/10 transition-all duration-300 cursor-pointer border border-transparent hover:border-success/20">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-success/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <CheckCircle2 className="w-5 h-5 text-success" />
+
+                  <div className='group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-success/5 to-transparent hover:from-success/10 transition-all duration-300 cursor-pointer border border-transparent hover:border-success/20'>
+                    <div className='flex-shrink-0 w-10 h-10 rounded-full bg-success/10 flex items-center justify-center group-hover:scale-110 transition-transform'>
+                      <CheckCircle2 className='w-5 h-5 text-success' />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2 mb-1">
-                        <p className="font-semibold text-foreground">Profile updated</p>
-                        <span className="text-xs text-muted-foreground whitespace-nowrap">1h ago</span>
+                    <div className='flex-1 min-w-0'>
+                      <div className='flex items-start justify-between gap-2 mb-1'>
+                        <p className='font-semibold text-foreground'>Profile updated</p>
+                        <span className='text-xs text-muted-foreground whitespace-nowrap'>1h ago</span>
                       </div>
-                      <p className="text-sm text-muted-foreground line-clamp-2">Your profile has been successfully updated</p>
+                      <p className='text-sm text-muted-foreground line-clamp-2'>Your profile has been successfully updated</p>
                     </div>
                   </div>
-                  
-                  <div className="group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-secondary/5 to-transparent hover:from-secondary/10 transition-all duration-300 cursor-pointer border border-transparent hover:border-secondary/20">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <UserPlus className="w-5 h-5 text-secondary" />
+
+                  <div className='group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-secondary/5 to-transparent hover:from-secondary/10 transition-all duration-300 cursor-pointer border border-transparent hover:border-secondary/20'>
+                    <div className='flex-shrink-0 w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center group-hover:scale-110 transition-transform'>
+                      <UserPlus className='w-5 h-5 text-secondary' />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2 mb-1">
-                        <p className="font-semibold text-foreground">New Connection</p>
-                        <span className="text-xs text-muted-foreground whitespace-nowrap">3h ago</span>
+                    <div className='flex-1 min-w-0'>
+                      <div className='flex items-start justify-between gap-2 mb-1'>
+                        <p className='font-semibold text-foreground'>New Connection</p>
+                        <span className='text-xs text-muted-foreground whitespace-nowrap'>3h ago</span>
                       </div>
-                      <p className="text-sm text-muted-foreground line-clamp-2">John connected with you</p>
+                      <p className='text-sm text-muted-foreground line-clamp-2'>John connected with you</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Quick Settings */}
-              <div className="glass-effect rounded-2xl p-6 shadow-xl">
-                <h2 className="text-xl font-bold text-foreground mb-6">Quick Settings</h2>
-                <div className="space-y-4">
-                  <div onClick={() => setActiveTab('profile')} className="flex items-center justify-between p-4 glass-effect rounded-xl hover:bg-accent transition-all duration-200 cursor-pointer card-hover">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-10 h-10 bg-gray-700 rounded-xl flex items-center justify-center shadow-glow">
-                        <User className="w-5 h-5 text-white" />
+              <div className='glass-effect rounded-2xl p-6 shadow-xl'>
+                <h2 className='text-xl font-bold text-foreground mb-6'>Quick Settings</h2>
+                <div className='space-y-4'>
+                  <div
+                    onClick={() => setActiveTab('profile')}
+                    className='flex items-center justify-between p-4 glass-effect rounded-xl hover:bg-accent transition-all duration-200 cursor-pointer card-hover'
+                  >
+                    <div className='flex items-center space-x-4'>
+                      <div className='w-10 h-10 bg-gray-700 rounded-xl flex items-center justify-center shadow-glow'>
+                        <User className='w-5 h-5 text-white' />
                       </div>
-                      <span className="font-semibold text-foreground">Edit Profile</span>
+                      <span className='font-semibold text-foreground'>Edit Profile</span>
                     </div>
                   </div>
-                  <div onClick={() => setShowPrivacySettings(true)} className="flex items-center justify-between p-4 glass-effect rounded-xl hover:bg-accent transition-all duration-200 cursor-pointer card-hover">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-10 h-10 bg-gray-700 rounded-xl flex items-center justify-center shadow-success">
-                        <Lock className="w-5 h-5 text-white" />
+                  <div
+                    onClick={() => setShowPrivacySettings(true)}
+                    className='flex items-center justify-between p-4 glass-effect rounded-xl hover:bg-accent transition-all duration-200 cursor-pointer card-hover'
+                  >
+                    <div className='flex items-center space-x-4'>
+                      <div className='w-10 h-10 bg-gray-700 rounded-xl flex items-center justify-center shadow-success'>
+                        <Lock className='w-5 h-5 text-white' />
                       </div>
-                      <span className="font-semibold text-foreground">Privacy Settings</span>
+                      <span className='font-semibold text-foreground'>Privacy Settings</span>
                     </div>
                   </div>
-                  <div onClick={() => setShowNotificationSettings(true)} className="flex items-center justify-between p-4 glass-effect rounded-xl hover:bg-accent transition-all duration-200 cursor-pointer card-hover">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-10 h-10 bg-gray-700 rounded-xl flex items-center justify-center shadow-warning">
-                        <Bell className="w-5 h-5 text-white" />
+                  <div
+                    onClick={() => setShowNotificationSettings(true)}
+                    className='flex items-center justify-between p-4 glass-effect rounded-xl hover:bg-accent transition-all duration-200 cursor-pointer card-hover'
+                  >
+                    <div className='flex items-center space-x-4'>
+                      <div className='w-10 h-10 bg-gray-700 rounded-xl flex items-center justify-center shadow-warning'>
+                        <Bell className='w-5 h-5 text-white' />
                       </div>
-                      <span className="font-semibold text-foreground">Notification Preferences</span>
+                      <span className='font-semibold text-foreground'>Notification Preferences</span>
                     </div>
                   </div>
-                  <div onClick={handleLogout} className="flex items-center justify-between p-4 glass-effect rounded-xl hover:bg-accent transition-all duration-200 cursor-pointer card-hover">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-10 h-10 bg-gray-700 rounded-xl flex items-center justify-center">
-                        <LogOut className="w-5 h-5 text-white" />
+                  <div
+                    onClick={handleLogout}
+                    className='flex items-center justify-between p-4 glass-effect rounded-xl hover:bg-accent transition-all duration-200 cursor-pointer card-hover'
+                  >
+                    <div className='flex items-center space-x-4'>
+                      <div className='w-10 h-10 bg-gray-700 rounded-xl flex items-center justify-center'>
+                        <LogOut className='w-5 h-5 text-white' />
                       </div>
-                      <span className="font-semibold text-foreground">Logout</span>
+                      <span className='font-semibold text-foreground'>Logout</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Recent Activity */}
-              
-            </div>}
+            </div>
+          )}
 
-          {activeTab === 'profile' && <div className="p-6 space-y-6">
-              <div className="glass-effect rounded-2xl p-8 shadow-xl text-center">
+          {activeTab === 'profile' && (
+            <div className='p-6 space-y-6'>
+              <div className='glass-effect rounded-2xl p-8 shadow-xl text-center'>
                 {/* Profile Image Preview */}
-                <div className="flex justify-center mb-6">
+                <div className='flex justify-center mb-6'>
                   {selectedImage ? (
-                    <img src={URL.createObjectURL(selectedImage)} alt="Profile Preview" className="w-24 h-24 rounded-3xl object-cover shadow-glow border-2 border-primary/20" />
+                    <img
+                      src={URL.createObjectURL(selectedImage)}
+                      alt='Profile Preview'
+                      className='w-24 h-24 rounded-3xl object-cover shadow-glow border-2 border-primary/20'
+                    />
                   ) : profileImageUrl ? (
-                    <img src={profileImageUrl} alt="Profile" className="w-24 h-24 rounded-3xl object-cover shadow-glow border-2 border-primary/20" />
+                    <img
+                      src={profileImageUrl}
+                      alt='Profile'
+                      className='w-24 h-24 rounded-3xl object-cover shadow-glow border-2 border-primary/20'
+                    />
                   ) : (
-                    <div className="w-24 h-24 bg-gradient-primary rounded-3xl flex items-center justify-center shadow-glow">
-                      <User className="w-12 h-12 text-white" />
+                    <div className='w-24 h-24 bg-gradient-primary rounded-3xl flex items-center justify-center shadow-glow'>
+                      <User className='w-12 h-12 text-white' />
                     </div>
                   )}
                 </div>
-                <h2 className="text-2xl font-bold gradient-text mb-2">
+                <h2 className='text-2xl font-bold gradient-text mb-2'>
                   {user?.name || 'Your Profile'}
                 </h2>
-                
+
                 {/* My Startup Story Field */}
-                <div className="mt-6 text-left">
-                  <label className="block text-sm font-semibold text-foreground mb-3">
+                <div className='mt-6 text-left'>
+                  <label className='block text-sm font-semibold text-foreground mb-3'>
                     My Startup Story
                   </label>
-                  <textarea value={profileData.startupStory} onChange={e => handleProfileChange('startupStory', e.target.value)} placeholder="Share your entrepreneurial journey, what inspired you to start, and what drives you forward..." className="w-full bg-background/50 border border-border rounded-xl p-4 text-foreground placeholder:text-foreground-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none" rows={4} maxLength={500} />
+                  <textarea
+                    value={profileData.startupStory}
+                    onChange={(e) => handleProfileChange('startupStory', e.target.value)}
+                    placeholder='Share your entrepreneurial journey, what inspired you to start, and what drives you forward...'
+                    className='w-full bg-background/50 border border-border rounded-xl p-4 text-foreground placeholder:text-foreground-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none'
+                    rows={4}
+                    maxLength={500}
+                  />
                 </div>
 
                 {/* Additional Profile Fields */}
-                <div className="mt-6 space-y-6 text-left">
+                <div className='mt-6 space-y-6 text-left'>
                   {/* Company Name Field */}
                   <div>
-                    <label className="block text-sm font-semibold text-foreground mb-3">
+                    <label className='block text-sm font-semibold text-foreground mb-3'>
                       Company Name
                     </label>
-                    <input type="text" value={profileData.companyName} onChange={e => handleProfileChange('companyName', e.target.value)} placeholder="Enter your company or startup name" className="w-full bg-background/50 border border-border rounded-xl p-4 text-foreground placeholder:text-foreground-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200" />
+                    <input
+                      type='text'
+                      value={profileData.companyName}
+                      onChange={(e) => handleProfileChange('companyName', e.target.value)}
+                      placeholder='Enter your company or startup name'
+                      className='w-full bg-background/50 border border-border rounded-xl p-4 text-foreground placeholder:text-foreground-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200'
+                    />
                   </div>
 
                   {/* Location Field */}
                   <div>
-                    <label className="block text-sm font-semibold text-foreground mb-3">
+                    <label className='block text-sm font-semibold text-foreground mb-3'>
                       Location
                     </label>
-                    <input type="text" value={profileData.location} onChange={e => handleProfileChange('location', e.target.value)} placeholder="City, State/Country" className="w-full bg-background/50 border border-border rounded-xl p-4 text-foreground placeholder:text-foreground-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200" />
+                    <input
+                      type='text'
+                      value={profileData.location}
+                      onChange={(e) => handleProfileChange('location', e.target.value)}
+                      placeholder='City, State/Country'
+                      className='w-full bg-background/50 border border-border rounded-xl p-4 text-foreground placeholder:text-foreground-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200'
+                    />
                   </div>
 
                   {/* Industry Field */}
                   <div>
-                    <label className="block text-sm font-semibold text-foreground mb-3">
+                    <label className='block text-sm font-semibold text-foreground mb-3'>
                       Industry
                     </label>
-                    <input type="text" value={profileData.industry} onChange={e => handleProfileChange('industry', e.target.value)} placeholder="e.g., FinTech, HealthTech, AI/ML, E-commerce" className="w-full bg-background/50 border border-border rounded-xl p-4 text-foreground placeholder:text-foreground-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200" />
+                    <input
+                      type='text'
+                      value={profileData.industry}
+                      onChange={(e) => handleProfileChange('industry', e.target.value)}
+                      placeholder='e.g., FinTech, HealthTech, AI/ML, E-commerce'
+                      className='w-full bg-background/50 border border-border rounded-xl p-4 text-foreground placeholder:text-foreground-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200'
+                    />
                   </div>
 
                   {/* Goals Field */}
                   <div>
-                    <label className="block text-sm font-semibold text-foreground mb-3">
+                    <label className='block text-sm font-semibold text-foreground mb-3'>
                       My Goals
                     </label>
-                    <textarea value={profileData.goals} onChange={e => handleProfileChange('goals', e.target.value)} placeholder="What are your current goals and what do you hope to achieve?" className="w-full bg-background/50 border border-border rounded-xl p-4 text-foreground placeholder:text-foreground-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none" rows={3} maxLength={300} />
-                    <span className="text-xs text-foreground-secondary mt-1 block">
+                    <textarea
+                      value={profileData.goals}
+                      onChange={(e) => handleProfileChange('goals', e.target.value)}
+                      placeholder='What are your current goals and what do you hope to achieve?'
+                      className='w-full bg-background/50 border border-border rounded-xl p-4 text-foreground placeholder:text-foreground-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none'
+                      rows={3}
+                      maxLength={300}
+                    />
+                    <span className='text-xs text-foreground-secondary mt-1 block'>
                       Up to 300 characters
                     </span>
                   </div>
 
                   {/* Favorite Startup Field */}
                   <div>
-                    <label className="block text-sm font-semibold text-foreground mb-3">
+                    <label className='block text-sm font-semibold text-foreground mb-3'>
                       One of my favorite startups and why
                     </label>
-                    <textarea value={profileData.favoriteStartup} onChange={e => handleProfileChange('favoriteStartup', e.target.value)} placeholder="Share a startup you admire and what inspires you about them" className="w-full bg-background/50 border border-border rounded-xl p-4 text-foreground placeholder:text-foreground-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none" rows={3} maxLength={300} />
-                    <span className="text-xs text-foreground-secondary mt-1 block">
+                    <textarea
+                      value={profileData.favoriteStartup}
+                      onChange={(e) => handleProfileChange('favoriteStartup', e.target.value)}
+                      placeholder='Share a startup you admire and what inspires you about them'
+                      className='w-full bg-background/50 border border-border rounded-xl p-4 text-foreground placeholder:text-foreground-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none'
+                      rows={3}
+                      maxLength={300}
+                    />
+                    <span className='text-xs text-foreground-secondary mt-1 block'>
                       Up to 300 characters
                     </span>
                   </div>
-
                 </div>
               </div>
 
               {/* Upload Options */}
-              <div className="glass-effect rounded-2xl p-4 shadow-xl">
-                <h3 className="text-lg font-bold text-foreground mb-4">Upload Content</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className='glass-effect rounded-2xl p-4 shadow-xl'>
+                <h3 className='text-lg font-bold text-foreground mb-4'>Upload Content</h3>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
                   {/* Profile Image Upload */}
-                  <div className="p-4 border-2 border-dashed border-border rounded-xl hover:border-info hover:bg-info/5 transition-all duration-200 cursor-pointer group" onClick={() => imageInputRef.current?.click()}>
-                    <div className="text-center">
-                      <div className="w-12 h-12 bg-gradient-info rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-info group-hover:scale-110 transition-transform duration-200">
-                        <Camera className="w-6 h-6 text-white" />
+                  <div
+                    className='p-4 border-2 border-dashed border-border rounded-xl hover:border-info hover:bg-info/5 transition-all duration-200 cursor-pointer group'
+                    onClick={() => imageInputRef.current?.click()}
+                  >
+                    <div className='text-center'>
+                      <div className='w-12 h-12 bg-gradient-info rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-info group-hover:scale-110 transition-transform duration-200'>
+                        <Camera className='w-6 h-6 text-white' />
                       </div>
-                      <h4 className="text-base font-semibold text-foreground mb-1">Profile Image</h4>
-                      <p className="text-foreground-secondary text-xs mb-3">
-                        {selectedImage ? `Selected: ${selectedImage.name}` : "Upload a profile picture to personalize your account"}
+                      <h4 className='text-base font-semibold text-foreground mb-1'>Profile Image</h4>
+                      <p className='text-foreground-secondary text-xs mb-3'>
+                        {selectedImage
+                          ? `Selected: ${selectedImage.name}`
+                          : 'Upload a profile picture to personalize your account'}
                       </p>
-                      <div className="flex items-center justify-center space-x-2 text-info font-medium text-sm">
-                        <Upload className="w-3 h-3" />
+                      <div className='flex items-center justify-center space-x-2 text-info font-medium text-sm'>
+                        <Upload className='w-3 h-3' />
                         <span>{selectedImage ? 'Change Image' : 'Choose Image'}</span>
                       </div>
                     </div>
-                    <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={e => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    setSelectedImage(file);
-                    console.log('Image selected:', file);
-                  }
-                }} />
+                    <input
+                      ref={imageInputRef}
+                      type='file'
+                      accept='image/*'
+                      className='hidden'
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setSelectedImage(file);
+                          console.log('Image selected:', file);
+                        }
+                      }}
+                    />
                   </div>
 
                   {/* Short Video Upload */}
-                  <div className="p-4 border-2 border-dashed border-border rounded-xl hover:border-secondary hover:bg-secondary/5 transition-all duration-200 cursor-pointer group" onClick={() => videoInputRef.current?.click()}>
-                    <div className="text-center">
-                      <div className="w-12 h-12 bg-gradient-to-r from-secondary to-secondary-dark rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-secondary/30 group-hover:scale-110 transition-transform duration-200">
-                        <Video className="w-6 h-6 text-white" />
+                  <div
+                    className='p-4 border-2 border-dashed border-border rounded-xl hover:border-secondary hover:bg-secondary/5 transition-all duration-200 cursor-pointer group'
+                    onClick={() => videoInputRef.current?.click()}
+                  >
+                    <div className='text-center'>
+                      <div className='w-12 h-12 bg-gradient-to-r from-secondary to-secondary-dark rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-secondary/30 group-hover:scale-110 transition-transform duration-200'>
+                        <Video className='w-6 h-6 text-white' />
                       </div>
-                      <h4 className="text-base font-semibold text-foreground mb-1">Short Video</h4>
-                      <p className="text-foreground-secondary text-xs mb-3">
-                        {selectedVideo ? `Selected: ${selectedVideo.name}` : "Share a short video introduction about yourself"}
+                      <h4 className='text-base font-semibold text-foreground mb-1'>Short Video</h4>
+                      <p className='text-foreground-secondary text-xs mb-3'>
+                        {selectedVideo
+                          ? `Selected: ${selectedVideo.name}`
+                          : 'Share a short video introduction about yourself'}
                       </p>
-                      <div className="flex items-center justify-center space-x-2 text-secondary font-medium text-sm">
-                        <Upload className="w-3 h-3" />
+                      <div className='flex items-center justify-center space-x-2 text-secondary font-medium text-sm'>
+                        <Upload className='w-3 h-3' />
                         <span>{selectedVideo ? 'Change Video' : 'Choose Video'}</span>
                       </div>
                     </div>
-                    <input ref={videoInputRef} type="file" accept="video/*" className="hidden" onChange={e => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    setSelectedVideo(file);
-                    console.log('Video selected:', file);
-                  }
-                }} />
+                    <input
+                      ref={videoInputRef}
+                      type='file'
+                      accept='video/*'
+                      className='hidden'
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setSelectedVideo(file);
+                          console.log('Video selected:', file);
+                        }
+                      }}
+                    />
                   </div>
                 </div>
               </div>
 
               {/* Save Profile Button */}
-              <button onClick={handleSaveProfile} disabled={isSaving} className="w-full bg-gradient-primary text-white py-4 rounded-xl font-semibold hover:shadow-glow focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all duration-200 button-hover-scale disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
-                {isSaving ? <div className="flex items-center justify-center">
-                    <Loader2 className="w-5 h-5 animate-spin mr-2" />
+              <button
+                onClick={handleSaveProfile}
+                disabled={isSaving}
+                className='w-full bg-gradient-primary text-white py-4 rounded-xl font-semibold hover:shadow-glow focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all duration-200 button-hover-scale disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none'
+              >
+                {isSaving ? (
+                  <div className='flex items-center justify-center'>
+                    <Loader2 className='w-5 h-5 animate-spin mr-2' />
                     Saving Profile...
-                  </div> : 'Save Profile'}
+                  </div>
+                ) : (
+                  'Save Profile'
+                )}
               </button>
-            </div>}
+            </div>
+          )}
 
-          {activeTab === 'resource' && <div className="p-6">
-              <div className="glass-effect rounded-2xl p-8 shadow-xl">
-                <h2 className="text-2xl font-bold text-success mb-6 text-center">
+          {activeTab === 'resource' && (
+            <div className='p-6'>
+              <div className='glass-effect rounded-2xl p-8 shadow-xl'>
+                <h2 className='text-2xl font-bold text-success mb-6 text-center'>
                   Resources
                 </h2>
-                <div className="flex justify-end mb-4">
-                  <Button 
-                    className="bg-gray-700 hover:bg-gray-600 transition-colors"
+                <div className='flex justify-end mb-4'>
+                  <Button
+                    className='bg-gray-700 hover:bg-gray-600 transition-colors'
                     onClick={() => setShowAddResourceDialog(true)}
                   >
                     Share Resource
                   </Button>
                 </div>
-                <div className="relative max-w-md mx-auto mb-6">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground-muted w-5 h-5" />
+                <div className='relative max-w-md mx-auto mb-6'>
+                  <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground-muted w-5 h-5' />
                   <Input
-                    type="text"
-                    placeholder="Search resources..."
-                    className="pl-10"
+                    type='text'
+                    placeholder='Search resources...'
+                    className='pl-10'
                     value={resourceSearchQuery}
                     onChange={(e) => setResourceSearchQuery(e.target.value)}
                   />
                 </div>
                 {isLoadingResources ? (
-                  <div className="text-center py-12">
-                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
-                    <p className="text-muted-foreground mt-4">Loading resources...</p>
+                  <div className='text-center py-12'>
+                    <Loader2 className='w-8 h-8 animate-spin mx-auto text-primary' />
+                    <p className='text-muted-foreground mt-4'>Loading resources...</p>
                   </div>
                 ) : resources.length === 0 ? (
-                  <div className="text-center py-12">
-                    <p className="text-muted-foreground">No resources yet. Add your first resource!</p>
+                  <div className='text-center py-12'>
+                    <p className='text-muted-foreground'>No resources yet. Add your first resource!</p>
                   </div>
                 ) : (
-                  <div className="space-y-4 mt-6">
+                  <div className='space-y-4 mt-6'>
                     {resources
                       .filter((resource) => {
                         const query = resourceSearchQuery.toLowerCase();
@@ -884,59 +978,62 @@ function MobileApp() {
                         );
                       })
                       .map((resource) => (
-                      <Card key={resource.id} className="p-4 hover:shadow-lg transition-shadow">
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="text-lg font-semibold text-foreground">{resource.title}</h3>
-                          <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
-                            {resource.category}
-                          </span>
-                        </div>
-                        <p className="text-sm text-muted-foreground mb-3">{resource.description}</p>
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <Mail className="w-4 h-4 mr-2" />
-                          {resource.contact}
-                        </div>
-                      </Card>
-                    ))}
+                        <Card key={resource.id} className='p-4 hover:shadow-lg transition-shadow'>
+                          <div className='flex justify-between items-start mb-2'>
+                            <h3 className='text-lg font-semibold text-foreground'>{resource.title}</h3>
+                            <span className='text-xs px-2 py-1 rounded-full bg-primary/10 text-primary'>
+                              {resource.category}
+                            </span>
+                          </div>
+                          <p className='text-sm text-muted-foreground mb-3'>{resource.description}</p>
+                          <div className='flex items-center text-sm text-muted-foreground'>
+                            <Mail className='w-4 h-4 mr-2' />
+                            {resource.contact}
+                          </div>
+                        </Card>
+                      ))}
                   </div>
                 )}
               </div>
-            </div>}
+            </div>
+          )}
 
           {activeTab === 'message' && (
             selectedChatUserId ? (
               <ChatDetail
                 partnerId={selectedChatUserId}
                 partnerName={selectedChatUserName}
+                partnerAvatar={selectedChatUserAvatar ?? undefined}
                 onBack={() => {
                   setSelectedChatUserId(null);
                   setSelectedChatUserName('');
+                  setSelectedChatUserAvatar(null);
                 }}
               />
             ) : (
-              <div className="p-6">
-                <div className="glass-effect rounded-2xl p-6 shadow-xl">
+              <div className='p-6'>
+                <div className='glass-effect rounded-2xl p-6 shadow-xl'>
                   {/* Header with New Message Button */}
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold text-secondary">Messages</h2>
+                  <div className='flex items-center justify-between mb-6'>
+                    <h2 className='text-xl font-bold text-secondary'>Messages</h2>
                     <Button
                       onClick={() => setShowNewMessageDialog(true)}
-                      size="sm"
-                      className="bg-gray-700 hover:bg-gray-600"
+                      size='sm'
+                      className='bg-gray-700 hover:bg-gray-600'
                     >
                       New Message
                     </Button>
                   </div>
 
                   {/* Search Bar */}
-                  <div className="relative mb-6">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground-muted w-5 h-5" />
+                  <div className='relative mb-6'>
+                    <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground-muted w-5 h-5' />
                     <Input
-                      type="text"
-                      placeholder="Search messages or users..."
+                      type='text'
+                      placeholder='Search messages or users...'
                       value={messageSearchQuery}
                       onChange={(e) => setMessageSearchQuery(e.target.value)}
-                      className="w-full pl-12 pr-4 py-3 bg-background/50 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                      className='w-full pl-12 pr-4 py-3 bg-background/50 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200'
                     />
                   </div>
 
@@ -949,6 +1046,22 @@ function MobileApp() {
                       setSelectedChatUserAvatar(null);
                     }}
                   />
+                </div>
+              </div>
+            )
+          )}
+        </div>
+
+        {/* Compose Message Dialog */}
+        <ComposeMessageDialog
+          open={showNewMessageDialog}
+          onOpenChange={setShowNewMessageDialog}
+          onSelectContact={(contactId, contactName, avatar) => {
+            setSelectedChatUserId(contactId);
+            setSelectedChatUserName(contactName);
+            setSelectedChatUserAvatar(avatar);
+          }}
+        />
 
         {/* Add Startup Dialog */}
         <AddStartupDialog
@@ -983,8 +1096,8 @@ function MobileApp() {
 
               setResources((prev) => [data, ...prev]);
               toast({
-                title: "Success",
-                description: "Resource shared successfully!",
+                title: 'Success',
+                description: 'Resource shared successfully!',
               });
             } catch (error: any) {
               toast({
@@ -996,6 +1109,7 @@ function MobileApp() {
           }}
         />
       </div>
-    </div>;
+    </div>
+  );
 }
 export default MobileApp;

@@ -9,11 +9,16 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import sarahChenAvatar from '@/assets/sarah-chen-avatar.jpg';
+import michaelRodriguezAvatar from '@/assets/michael-rodriguez-avatar.jpg';
+import emilyWatsonAvatar from '@/assets/emily-watson-avatar.jpg';
+import davidKimAvatar from '@/assets/david-kim-avatar.jpg';
+import jessicaLeeAvatar from '@/assets/jessica-lee-avatar.jpg';
 
 interface ComposeMessageDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSelectContact: (contactId: string, contactName: string) => void;
+  onSelectContact: (contactId: string, contactName: string, avatar: string | null) => void;
 }
 
 interface Contact {
@@ -58,11 +63,23 @@ export const ComposeMessageDialog: React.FC<ComposeMessageDialogProps> = ({
             .toUpperCase()
             .substring(0, 2);
 
+          const getAvatarForFounder = (name: string, imageUrl: string | null) => {
+            const lowerName = name.toLowerCase();
+            if (lowerName.includes('sarah chen')) return sarahChenAvatar;
+            if (lowerName.includes('michael rodriguez')) return michaelRodriguezAvatar;
+            if (lowerName.includes('emily watson')) return emilyWatsonAvatar;
+            if (lowerName.includes('david kim')) return davidKimAvatar;
+            if (lowerName.includes('jessica lee')) return jessicaLeeAvatar;
+            return imageUrl;
+          };
+
+          const avatarUrl = getAvatarForFounder(startup.founder_name, startup.image_url || null);
+
           return {
             id: startup.id,
             name: startup.founder_name,
             startupName: startup.startup_name,
-            avatar: startup.image_url || initials,
+            avatar: avatarUrl || initials,
           };
         });
         setContacts(formattedContacts);
@@ -83,7 +100,7 @@ export const ComposeMessageDialog: React.FC<ComposeMessageDialogProps> = ({
 
   const handleSelectContact = (contact: Contact) => {
     const displayName = `${contact.name} - ${contact.startupName}`;
-    onSelectContact(contact.id, displayName);
+    onSelectContact(contact.id, displayName, contact.avatar);
     onOpenChange(false);
   };
 
