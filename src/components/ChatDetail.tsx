@@ -3,6 +3,11 @@ import { ArrowLeft, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
+import sarahChenAvatar from '@/assets/sarah-chen-avatar.jpg';
+import michaelRodriguezAvatar from '@/assets/michael-rodriguez-avatar.jpg';
+import emilyWatsonAvatar from '@/assets/emily-watson-avatar.jpg';
+import davidKimAvatar from '@/assets/david-kim-avatar.jpg';
+import jessicaLeeAvatar from '@/assets/jessica-lee-avatar.jpg';
 
 interface Message {
   id: number;
@@ -44,13 +49,25 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
 
       const { data, error } = await supabase
         .from('startups')
-        .select('image_url')
+        .select('image_url, founder_name')
         .eq('id', partnerId)
         .maybeSingle();
 
       if (error) throw error;
       if (data) {
-        setPartnerImage(data.image_url);
+        // Map founder names to avatars (same logic as Startups screen)
+        const getAvatarForFounder = (name: string, imageUrl: string | null) => {
+          const lowerName = name.toLowerCase();
+          if (lowerName.includes('sarah chen')) return sarahChenAvatar;
+          if (lowerName.includes('michael rodriguez')) return michaelRodriguezAvatar;
+          if (lowerName.includes('emily watson')) return emilyWatsonAvatar;
+          if (lowerName.includes('david kim')) return davidKimAvatar;
+          if (lowerName.includes('jessica lee')) return jessicaLeeAvatar;
+          return imageUrl;
+        };
+        
+        const avatarUrl = getAvatarForFounder(data.founder_name, data.image_url);
+        setPartnerImage(avatarUrl);
       }
     } catch (error) {
       console.error('Error loading partner info:', error);
