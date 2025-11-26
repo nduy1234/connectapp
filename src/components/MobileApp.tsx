@@ -262,6 +262,35 @@ function MobileApp() {
     }
   };
 
+  // Clear all notifications
+  const clearAllNotifications = async () => {
+    if (!authUser) return;
+
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .delete()
+        .eq('user_id', authUser.id);
+
+      if (error) throw error;
+
+      setNotifications([]);
+      setUnreadCount(0);
+      
+      toast({
+        title: "Success",
+        description: "All notifications cleared",
+      });
+    } catch (error) {
+      console.error('Error clearing notifications:', error);
+      toast({
+        title: "Error",
+        description: "Failed to clear notifications",
+        variant: "destructive",
+      });
+    }
+  };
+
   // Load notifications when authenticated
   useEffect(() => {
     if (authUser && currentScreen === 'main') {
@@ -834,11 +863,23 @@ function MobileApp() {
               {/* Notifications Section */}
               <div className="glass-effect rounded-2xl p-6 shadow-xl">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-foreground">Recent Notifications</h2>
-                  {unreadCount > 0 && (
-                    <span className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-xs font-semibold">
-                      {unreadCount} new
-                    </span>
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-xl font-bold text-foreground">Recent Notifications</h2>
+                    {unreadCount > 0 && (
+                      <span className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-xs font-semibold">
+                        {unreadCount} new
+                      </span>
+                    )}
+                  </div>
+                  {notifications.length > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={clearAllNotifications}
+                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    >
+                      Clear All
+                    </Button>
                   )}
                 </div>
                 <div className="space-y-3">
