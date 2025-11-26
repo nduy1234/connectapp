@@ -35,11 +35,18 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
 
   const loadPartnerInfo = async () => {
     try {
+      // Validate UUID format
+      const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!uuidPattern.test(partnerId)) {
+        console.log('Invalid partner ID format:', partnerId);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('startups')
         .select('image_url')
         .eq('id', partnerId)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       if (data) {
