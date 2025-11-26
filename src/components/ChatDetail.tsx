@@ -356,16 +356,16 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
                   {message.sentByMe && (
                     <div className="absolute -right-2 top-1/2 -translate-y-1/2 flex flex-col gap-1">
                       <button
-                        onClick={() => handleEditMessage(message)}
-                        className="w-8 h-8 bg-background border border-border rounded-lg flex items-center justify-center hover:bg-accent transition-colors"
-                      >
-                        <Edit className="w-4 h-4 text-foreground" />
-                      </button>
-                      <button
                         onClick={() => handleDeleteMessage(message.uuid)}
                         className="w-8 h-8 bg-background border border-border rounded-lg flex items-center justify-center hover:bg-accent transition-colors"
                       >
                         <Trash2 className="w-4 h-4 text-foreground" />
+                      </button>
+                      <button
+                        onClick={() => handleEditMessage(message)}
+                        className="w-8 h-8 bg-background border border-border rounded-lg flex items-center justify-center hover:bg-accent transition-colors"
+                      >
+                        <Edit className="w-4 h-4 text-foreground" />
                       </button>
                     </div>
                   )}
