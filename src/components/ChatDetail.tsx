@@ -354,7 +354,7 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
                     {message.timestamp}
                   </p>
                   {message.sentByMe && (
-                    <div className="absolute -right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col gap-1">
+                    <div className="absolute -right-2 top-1/2 -translate-y-1/2 flex flex-col gap-1">
                       <button
                         onClick={() => handleEditMessage(message)}
                         className="w-8 h-8 bg-background border border-border rounded-lg flex items-center justify-center hover:bg-accent transition-colors"
