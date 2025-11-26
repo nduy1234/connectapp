@@ -363,9 +363,9 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
                       </button>
                       <button
                         onClick={() => handleDeleteMessage(message.uuid)}
-                        className="w-8 h-8 bg-background border border-border rounded-lg flex items-center justify-center hover:bg-destructive hover:text-destructive-foreground transition-colors"
+                        className="w-8 h-8 bg-background border border-border rounded-lg flex items-center justify-center hover:bg-accent transition-colors"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-4 h-4 text-foreground" />
                       </button>
                     </div>
                   )}
