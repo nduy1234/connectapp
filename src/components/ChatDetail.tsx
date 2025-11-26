@@ -313,7 +313,7 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
             className={`flex ${message.sentByMe ? 'justify-end' : 'justify-start'} group`}
           >
             <div
-              className={`max-w-[75%] rounded-2xl px-4 py-3 relative ${
+              className={`max-w-[75%] rounded-2xl px-4 py-3 ${
                 message.sentByMe
                   ? 'bg-gradient-primary text-white shadow-glow'
                   : 'glass-effect text-foreground'
@@ -354,7 +354,7 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
                     {message.timestamp}
                   </p>
                   {message.sentByMe && (
-                    <div className="absolute -right-2 top-1/2 -translate-y-1/2 flex flex-row gap-1">
+                    <div className="flex flex-row gap-1 mt-2">
                       <button
                         onClick={() => handleDeleteMessage(message.uuid)}
                         className="w-8 h-8 bg-background border border-border rounded-lg flex items-center justify-center hover:bg-accent transition-colors"
