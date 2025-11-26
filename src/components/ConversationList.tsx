@@ -50,11 +50,23 @@ export const ConversationList: React.FC<ConversationListProps> = ({
       // Get unique partner IDs
       const partnerIds = Array.from(conversationMap.keys());
 
-      // Fetch startup info for all partners
+      // Filter out invalid UUIDs (old test data)
+      const validPartnerIds = partnerIds.filter((id) => {
+        // UUID regex pattern
+        const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        return uuidPattern.test(id);
+      });
+
+      if (validPartnerIds.length === 0) {
+        setConversations([]);
+        return;
+      }
+
+      // Fetch startup info for all valid partners
       const { data: startups, error: startupsError } = await supabase
         .from('startups')
         .select('id, founder_name, startup_name, image_url')
-        .in('id', partnerIds);
+        .in('id', validPartnerIds);
 
       if (startupsError) throw startupsError;
 
@@ -63,28 +75,30 @@ export const ConversationList: React.FC<ConversationListProps> = ({
         startups?.map((s) => [s.id, s]) || []
       );
 
-      // Convert to conversation format
-      const conversationList: Conversation[] = Array.from(conversationMap.values()).map((message) => {
-        const startup = startupMap.get(message.partner_id);
-        const founderName = startup?.founder_name || 'Unknown';
-        const startupName = startup?.startup_name || '';
-        const displayName = startupName ? `${founderName} - ${startupName}` : founderName;
-        
-        const initials = founderName
-          .split(' ')
-          .map((word: string) => word[0])
-          .join('')
-          .toUpperCase()
-          .substring(0, 2);
+      // Convert to conversation format (only include valid conversations with startup data)
+      const conversationList: Conversation[] = Array.from(conversationMap.values())
+        .filter((message) => startupMap.has(message.partner_id))
+        .map((message) => {
+          const startup = startupMap.get(message.partner_id);
+          const founderName = startup?.founder_name || 'Unknown';
+          const startupName = startup?.startup_name || '';
+          const displayName = startupName ? `${founderName} - ${startupName}` : founderName;
+          
+          const initials = founderName
+            .split(' ')
+            .map((word: string) => word[0])
+            .join('')
+            .toUpperCase()
+            .substring(0, 2);
 
-        return {
-          id: message.partner_id,
-          name: displayName,
-          lastMessage: message.text,
-          time: formatDistanceToNow(new Date(message.created_at), { addSuffix: true }),
-          avatar: startup?.image_url || initials,
-        };
-      });
+          return {
+            id: message.partner_id,
+            name: displayName,
+            lastMessage: message.text,
+            time: formatDistanceToNow(new Date(message.created_at), { addSuffix: true }),
+            avatar: startup?.image_url || initials,
+          };
+        });
 
       setConversations(conversationList);
     } catch (error) {
