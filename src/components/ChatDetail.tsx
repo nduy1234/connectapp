@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send } from 'lucide-react';
+import { ArrowLeft, Send, Edit, Trash2, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 import sarahChenAvatar from '@/assets/sarah-chen-avatar.jpg';
 import michaelRodriguezAvatar from '@/assets/michael-rodriguez-avatar.jpg';
 import emilyWatsonAvatar from '@/assets/emily-watson-avatar.jpg';
@@ -11,6 +12,7 @@ import jessicaLeeAvatar from '@/assets/jessica-lee-avatar.jpg';
 
 interface Message {
   id: number;
+  uuid: string;
   text: string;
   sentByMe: boolean;
   timestamp: string;
@@ -31,6 +33,8 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
   const [newMessage, setNewMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [partnerImage, setPartnerImage] = useState<string | null>(null);
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [editedText, setEditedText] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Get the avatar for the current partner - prioritize known founders
@@ -131,6 +135,7 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
       if (data) {
         const formattedMessages = data.map((msg) => ({
           id: parseInt(msg.id.split('-')[0], 16),
+          uuid: msg.id,
           text: msg.text,
           sentByMe: msg.sent_by_me,
           timestamp: new Date(msg.created_at).toLocaleTimeString('en-US', {
@@ -191,6 +196,70 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
     }
   };
 
+  const handleDeleteMessage = async (messageUuid: string) => {
+    if (window.confirm('Are you sure you want to delete this message?')) {
+      try {
+        const { error } = await supabase
+          .from('messages')
+          .delete()
+          .eq('id', messageUuid);
+
+        if (error) throw error;
+
+        await loadMessages();
+        toast({
+          title: 'Message deleted',
+          description: 'Your message has been deleted successfully.',
+        });
+      } catch (error: any) {
+        console.error('Error deleting message:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to delete message. Please try again.',
+          variant: 'destructive',
+        });
+      }
+    }
+  };
+
+  const handleEditMessage = (message: Message) => {
+    setEditingMessageId(message.uuid);
+    setEditedText(message.text);
+  };
+
+  const handleSaveEdit = async (messageUuid: string) => {
+    if (!editedText.trim()) return;
+
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .update({ text: editedText })
+        .eq('id', messageUuid);
+
+      if (error) throw error;
+
+      await loadMessages();
+      setEditingMessageId(null);
+      setEditedText('');
+      toast({
+        title: 'Message updated',
+        description: 'Your message has been updated successfully.',
+      });
+    } catch (error: any) {
+      console.error('Error updating message:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to update message. Please try again.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingMessageId(null);
+    setEditedText('');
+  };
+
   // Get initials from partner name
   const getInitials = (name: string) => {
     return name
@@ -241,23 +310,67 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
           messages.map((message) => (
           <div
             key={message.id}
-            className={`flex ${message.sentByMe ? 'justify-end' : 'justify-start'}`}
+            className={`flex ${message.sentByMe ? 'justify-end' : 'justify-start'} group`}
           >
             <div
-              className={`max-w-[75%] rounded-2xl px-4 py-3 ${
+              className={`max-w-[75%] rounded-2xl px-4 py-3 relative ${
                 message.sentByMe
                   ? 'bg-gradient-primary text-white shadow-glow'
                   : 'glass-effect text-foreground'
               }`}
             >
-              <p className="text-sm break-words">{message.text}</p>
-              <p
-                className={`text-xs mt-1 ${
-                  message.sentByMe ? 'text-white/70' : 'text-foreground-muted'
-                }`}
-              >
-                {message.timestamp}
-              </p>
+              {editingMessageId === message.uuid ? (
+                <div className="space-y-2">
+                  <Input
+                    value={editedText}
+                    onChange={(e) => setEditedText(e.target.value)}
+                    className="bg-background/50 border-border"
+                  />
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="sm"
+                      onClick={() => handleSaveEdit(message.uuid)}
+                      className="bg-gradient-primary text-white hover:shadow-glow"
+                    >
+                      <Check className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleCancelEdit}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <p className="text-sm break-words">{message.text}</p>
+                  <p
+                    className={`text-xs mt-1 ${
+                      message.sentByMe ? 'text-white/70' : 'text-foreground-muted'
+                    }`}
+                  >
+                    {message.timestamp}
+                  </p>
+                  {message.sentByMe && (
+                    <div className="absolute -right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col gap-1">
+                      <button
+                        onClick={() => handleEditMessage(message)}
+                        className="w-8 h-8 bg-background border border-border rounded-lg flex items-center justify-center hover:bg-accent transition-colors"
+                      >
+                        <Edit className="w-4 h-4 text-foreground" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteMessage(message.uuid)}
+                        className="w-8 h-8 bg-background border border-border rounded-lg flex items-center justify-center hover:bg-destructive hover:text-destructive-foreground transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
           ))
