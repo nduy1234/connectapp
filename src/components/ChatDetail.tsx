@@ -209,6 +209,19 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
       .toUpperCase();
   };
 
+  // Resolve avatar for chat header (prefer known founders, then loaded image)
+  const getHeaderAvatar = () => {
+    const lower = partnerName.toLowerCase();
+    if (lower.includes('sarah chen')) return sarahChenAvatar;
+    if (lower.includes('michael rodriguez')) return michaelRodriguezAvatar;
+    if (lower.includes('emily watson')) return emilyWatsonAvatar;
+    if (lower.includes('david kim')) return davidKimAvatar;
+    if (lower.includes('jessica lee')) return jessicaLeeAvatar;
+    return partnerImage;
+  };
+
+  const avatarSrc = getHeaderAvatar();
+
   return (
     <div className="flex flex-col h-screen bg-gradient-background">
       {/* Header */}
@@ -221,8 +234,8 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center shadow-glow flex-shrink-0 overflow-hidden">
-            {partnerImage ? (
-              <img src={partnerImage} alt={partnerName} className="w-full h-full object-cover" />
+            {avatarSrc ? (
+              <img src={avatarSrc} alt={partnerName} className="w-full h-full object-cover" />
             ) : (
               <span className="text-white font-bold text-sm">{getInitials(partnerName)}</span>
             )}
