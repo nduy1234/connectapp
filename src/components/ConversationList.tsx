@@ -107,7 +107,8 @@ export const ConversationList: React.FC<ConversationListProps> = ({
           schema: 'public',
           table: 'messages',
         },
-        () => {
+        (payload) => {
+          console.log('Message change detected:', payload);
           loadConversations();
         }
       )

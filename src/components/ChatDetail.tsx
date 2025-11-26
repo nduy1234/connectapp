@@ -53,6 +53,28 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
   // Load messages from database
   useEffect(() => {
     loadMessages();
+
+    // Set up real-time subscription for new messages
+    const channel = supabase
+      .channel(`messages-${partnerId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `partner_id=eq.${partnerId}`,
+        },
+        (payload) => {
+          console.log('New message received:', payload);
+          loadMessages();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [partnerId]);
 
   const loadMessages = async () => {
@@ -123,14 +145,8 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
 
         if (error) throw error;
 
-        // Update local state
-        const message: Message = {
-          id: messages.length + 1,
-          text: newMessage,
-          sentByMe: true,
-          timestamp,
-        };
-        setMessages([...messages, message]);
+        // Reload messages to get the latest data
+        await loadMessages();
         setNewMessage('');
       } catch (error: any) {
         console.error('Error sending message:', error);
