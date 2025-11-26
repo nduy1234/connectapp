@@ -33,63 +33,54 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
   const [partnerImage, setPartnerImage] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Load partner info
+  // Get the avatar for the current partner - prioritize known founders
+  const getPartnerAvatar = () => {
+    const nameLower = partnerName.toLowerCase();
+    
+    // Check for known founders first
+    if (nameLower.includes('sarah chen')) return sarahChenAvatar;
+    if (nameLower.includes('michael rodriguez')) return michaelRodriguezAvatar;
+    if (nameLower.includes('emily watson')) return emilyWatsonAvatar;
+    if (nameLower.includes('david kim')) return davidKimAvatar;
+    if (nameLower.includes('jessica lee')) return jessicaLeeAvatar;
+    
+    // Fall back to partnerImage from state
+    return partnerImage;
+  };
+
+  // Load partner info from database
   useEffect(() => {
     loadPartnerInfo();
   }, [partnerId]);
 
   const loadPartnerInfo = async () => {
     try {
-      // First, try to resolve avatar directly from the partner name (covers seed founders)
+      // First check if it's a known founder by name
       const nameLower = partnerName.toLowerCase();
-      if (nameLower.includes('sarah chen')) {
-        setPartnerImage(sarahChenAvatar);
-        return;
-      }
-      if (nameLower.includes('michael rodriguez')) {
-        setPartnerImage(michaelRodriguezAvatar);
-        return;
-      }
-      if (nameLower.includes('emily watson')) {
-        setPartnerImage(emilyWatsonAvatar);
-        return;
-      }
-      if (nameLower.includes('david kim')) {
-        setPartnerImage(davidKimAvatar);
-        return;
-      }
-      if (nameLower.includes('jessica lee')) {
-        setPartnerImage(jessicaLeeAvatar);
+      if (nameLower.includes('sarah chen') || 
+          nameLower.includes('michael rodriguez') ||
+          nameLower.includes('emily watson') ||
+          nameLower.includes('david kim') ||
+          nameLower.includes('jessica lee')) {
+        // Avatar will be set by getPartnerAvatar(), no need to load from DB
         return;
       }
 
       // If we don't match by name, and the ID looks like a UUID, try loading from the startups table
       const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
       if (!uuidPattern.test(partnerId)) {
-        console.log('Invalid partner ID format for DB lookup:', partnerId);
         return;
       }
 
       const { data, error } = await supabase
         .from('startups')
-        .select('image_url, founder_name')
+        .select('image_url')
         .eq('id', partnerId)
         .maybeSingle();
 
       if (error) throw error;
-      if (data) {
-        const founderLower = (data.founder_name || '').toLowerCase();
-        let avatarUrl: string | null = data.image_url;
-
-        if (founderLower.includes('sarah chen')) avatarUrl = sarahChenAvatar;
-        else if (founderLower.includes('michael rodriguez')) avatarUrl = michaelRodriguezAvatar;
-        else if (founderLower.includes('emily watson')) avatarUrl = emilyWatsonAvatar;
-        else if (founderLower.includes('david kim')) avatarUrl = davidKimAvatar;
-        else if (founderLower.includes('jessica lee')) avatarUrl = jessicaLeeAvatar;
-
-        if (avatarUrl) {
-          setPartnerImage(avatarUrl);
-        }
+      if (data?.image_url) {
+        setPartnerImage(data.image_url);
       }
     } catch (error) {
       console.error('Error loading partner info:', error);
@@ -209,18 +200,7 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
       .toUpperCase();
   };
 
-  // Resolve avatar for chat header (prefer known founders, then loaded image)
-  const getHeaderAvatar = () => {
-    const lower = partnerName.toLowerCase();
-    if (lower.includes('sarah chen')) return sarahChenAvatar;
-    if (lower.includes('michael rodriguez')) return michaelRodriguezAvatar;
-    if (lower.includes('emily watson')) return emilyWatsonAvatar;
-    if (lower.includes('david kim')) return davidKimAvatar;
-    if (lower.includes('jessica lee')) return jessicaLeeAvatar;
-    return partnerImage;
-  };
-
-  const avatarSrc = getHeaderAvatar();
+  const avatarSrc = getPartnerAvatar();
 
   return (
     <div className="flex flex-col h-screen bg-gradient-background">
