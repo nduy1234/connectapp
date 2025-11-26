@@ -40,10 +40,33 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
 
   const loadPartnerInfo = async () => {
     try {
-      // Validate UUID format
+      // First, try to resolve avatar directly from the partner name (covers seed founders)
+      const nameLower = partnerName.toLowerCase();
+      if (nameLower.includes('sarah chen')) {
+        setPartnerImage(sarahChenAvatar);
+        return;
+      }
+      if (nameLower.includes('michael rodriguez')) {
+        setPartnerImage(michaelRodriguezAvatar);
+        return;
+      }
+      if (nameLower.includes('emily watson')) {
+        setPartnerImage(emilyWatsonAvatar);
+        return;
+      }
+      if (nameLower.includes('david kim')) {
+        setPartnerImage(davidKimAvatar);
+        return;
+      }
+      if (nameLower.includes('jessica lee')) {
+        setPartnerImage(jessicaLeeAvatar);
+        return;
+      }
+
+      // If we don't match by name, and the ID looks like a UUID, try loading from the startups table
       const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
       if (!uuidPattern.test(partnerId)) {
-        console.log('Invalid partner ID format:', partnerId);
+        console.log('Invalid partner ID format for DB lookup:', partnerId);
         return;
       }
 
@@ -55,19 +78,18 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({
 
       if (error) throw error;
       if (data) {
-        // Map founder names to avatars (same logic as Startups screen)
-        const getAvatarForFounder = (name: string, imageUrl: string | null) => {
-          const lowerName = name.toLowerCase();
-          if (lowerName.includes('sarah chen')) return sarahChenAvatar;
-          if (lowerName.includes('michael rodriguez')) return michaelRodriguezAvatar;
-          if (lowerName.includes('emily watson')) return emilyWatsonAvatar;
-          if (lowerName.includes('david kim')) return davidKimAvatar;
-          if (lowerName.includes('jessica lee')) return jessicaLeeAvatar;
-          return imageUrl;
-        };
-        
-        const avatarUrl = getAvatarForFounder(data.founder_name, data.image_url);
-        setPartnerImage(avatarUrl);
+        const founderLower = (data.founder_name || '').toLowerCase();
+        let avatarUrl: string | null = data.image_url;
+
+        if (founderLower.includes('sarah chen')) avatarUrl = sarahChenAvatar;
+        else if (founderLower.includes('michael rodriguez')) avatarUrl = michaelRodriguezAvatar;
+        else if (founderLower.includes('emily watson')) avatarUrl = emilyWatsonAvatar;
+        else if (founderLower.includes('david kim')) avatarUrl = davidKimAvatar;
+        else if (founderLower.includes('jessica lee')) avatarUrl = jessicaLeeAvatar;
+
+        if (avatarUrl) {
+          setPartnerImage(avatarUrl);
+        }
       }
     } catch (error) {
       console.error('Error loading partner info:', error);
